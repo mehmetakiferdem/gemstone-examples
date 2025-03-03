@@ -1,0 +1,44 @@
+[formatting]
+line_length = 79
+
+[save]
+autosave_delay = 1000
+autosave = "after_delay"
+format_on_save = false
+
+[completion]
+activate_on_typing = true
+copilot = false
+
+[display]
+theme = "light"
+dataframes = "rich"
+cell_output = "above"
+default_width = "medium"
+code_editor_font_size = 14
+
+[snippets]
+custom_paths = []
+include_default_snippets = true
+
+[server]
+browser = "default"
+follow_symlink = false
+
+[keymap]
+preset = "default"
+[keymap.overrides]
+
+[package_management]
+manager = "uv"
+
+[experimental]
+
+[ai]
+rules = ""
+
+[runtime]
+on_cell_change = "autorun"
+watcher_on_save = "lazy"
+auto_instantiate = true
+auto_reload = "autorun"

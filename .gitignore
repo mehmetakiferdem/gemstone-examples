@@ -1,0 +1,15 @@
+.venv
+.downloads
+.src
+.tmp
+.ti
+
+src/
+
+__pycache__
+__marimo__
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info

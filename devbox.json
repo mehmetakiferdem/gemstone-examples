@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
+  "packages": [
+    "uv@latest",
+    "qt6.qtbase@latest",
+    "go-task@latest",
+    "vcstool@latest",
+    "wget@latest",
+    "unzip@latest"
+  ],
+  "env": {
+    "VENV_DIR": ".venv",
+    "UV_LINK_MODE": "copy"
+  },
+  "shell": {
+    "init_hook": [
+      "uv python install 3.12",
+      "uv sync",
+      "source $VENV_DIR/bin/activate",
+      "source $DEVBOX_PROJECT_ROOT/.devbox/nix/profile/default/share/bash-completion/completions/uv.bash",
+      "source $DEVBOX_PACKAGES_DIR/share/vcstool-completion/vcs.$(basename $SHELL)",
+      "source <(devbox completion $(basename $SHELL))",
+      "source <(task --completion $(basename $SHELL))",
+      "source <(_MARIMO_COMPLETE=bash_source marimo)",
+      "export PS1='📦 devbox:\\[\\033[01;34m\\]\\W\\[\\033[00m\\]> '"
+    ],
+    "scripts": {
+      "destroy": "rm -rf .venv && rm -rf .devbox && deactivate",
+      "marimo": "marimo --yes edit notebook.py --port 8001",
+      "build": [
+        "uv run pyinstaller --onefile --noconfirm --windowed --specpath=build --name gcs gui/gcs.py"
+      ]
+    }
+  }
+}

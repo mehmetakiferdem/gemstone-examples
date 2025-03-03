@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "be5invis.vscode-icontheme-nomo-dark",
+        "eamodio.gitlens",
+        "spywhere.guides",
+        "daylerees.rainglow",
+        "charliermarsh.ruff",
+        "ms-vscode.hexeditor",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "tamasfe.even-better-toml",
+        "ms-vscode-remote.remote-ssh",
+        "ms-vscode.remote-explorer"
+    ]
+}

@@ -1,0 +1,352 @@
+https://www.ti.com/tool/PROCESSOR-SDK-AM67A
+https://www.ti.com/tool/PROCESSOR-SDK-J722S
+https://www.ti.com/legal/terms-conditions/terms-of-use.html
+
+#
+# Copyright (c) 2013-2020, Texas Instruments Incorporated
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# *  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# *  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# *  Neither the name of Texas Instruments Incorporated nor the names of
+#    its contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+Texas Instruments Online Terms of Use
+
+These terms of use (TOU) apply to all customers, visitors, and other persons or entities that use or access TI.com.
+Your access to and use of TI.com is subject to these TOU and all applicable laws. Unless prompted otherwise, by
+accessing or using any part of TI.com, you acknowledge that you have read and understand the following terms and you
+accept, without limitation or qualification, to be bound by them.
+
+1. Scope and Content
+
+Texas Instruments Incorporated, 12500 TI Boulevard, Dallas, Texas 75243, USA and its subsidiaries
+(together, “TI”, “we”, or “our”) provide content, website features, and other products and services to you on TI’s
+websites, including, but not limited to, design and computing tools, blogs, mobile applications, download areas,
+research areas, community forums, chat functionality, video, sharing websites, supplier data exchanges, product and
+marketing information, and other online services (collectively, “TI Services”). You understand and agree that you remain
+responsible for using your independent analysis, evaluation, and judgment in designing your systems and products.
+TI provides TI Services subject to these terms of use (“Terms of Use”).
+
+2. You Agree
+
+By using TI Services, you agree to these Terms of Use. These Terms of Use are a legal agreement between you and TI. By
+using TI Services, you also agree to TI’s Privacy Policy (including Cookie Policy), which is incorporated herein by
+reference. Please read these documents carefully. If you do not agree to these terms, do not use TI Services.
+
+3. Service Terms
+
+TI offers a wide range of TI Services, and sometimes additional terms may apply. When you use a TI Service (for example,
+the TI E2E™ Community, TI Designs, WEBENCH® Design Center, TI Store, and TI’s Education Technology Store), your use of
+such TI Service is subject to the guidelines, terms, notices and disclaimers, end user license agreements, and other
+agreements applicable to that TI Service (collectively, “Service Terms”). If these Terms of Use are inconsistent with
+the Service Terms, those Service Terms will control to the extent there is a conflict.
+
+4. Use Restrictions and Termination of Access to TI Services
+
+TI Services are protected by copyright laws, international copyright treaties, and other intellectual property laws and
+treaties. Except as stated herein, no TI Service, nor any part of any TI Service, may be reproduced, duplicated,
+mirrored, modified, displayed, distributed, copied, sold, resold, visited, or otherwise exploited for any purpose
+without express prior written consent of TI.
+
+You agree not to use TI Services in a manner that violates any applicable law or regulation; to stalk, harass, or harm
+another individual; to impersonate any person or entity or otherwise misrepresent your affiliation with a person or
+entity; to interfere with or disrupt TI Services or servers or networks connected to TI Services; use any data mining,
+robots, or similar data scraping or extraction methods in connection with TI Services; frame or utilize framing
+techniques to enclose any trademark, logo, proprietary, or other information (including datasheets, images, text, page
+layout, or form); and attempt to gain unauthorized access to any portion of TI Services or any other accounts, computer
+systems, or networks connected to TI Services, whether through hacking, password mining, or any other means.
+
+Subject to any Service Terms that may apply, TI grants you permission to download, reproduce, display, and distribute
+TI Services solely for non-commercial or personal use, provided that you do not modify such TI Services, and provided
+further that you retain all copyright and proprietary notices as they appear in such TI Services.
+
+TI further grants to K-12 educational institutions, universities, and community colleges permission to download,
+reproduce, display, and distribute TI Services solely for use in the classroom, provided that such institutions identify
+TI as the source of TI Services and include the following credit line: “Courtesy of Texas Instruments.” Unauthorized
+use of any TI Service is expressly prohibited by law, and may result in civil and criminal penalties. This grant of
+permission terminates if you breach any provision in these Terms of Use or Service Terms. Upon termination, you agree
+to destroy any materials relating to TI Services.
+
+TI reserves the right, in its sole discretion, to terminate, suspend, or modify your registration with, or access to,
+all or any part of TI Services, without notice, at any time and for any reason.
+
+5. Your Account and Company Accounts
+
+You may be granted permission to establish, access, and use an account using TI Services containing your preferences
+and other information (“User Account”). The permission to establish your User Account is personal to you and cannot be
+shared with or otherwise used by any other individual or entity. You hereby represent and warrant that all information
+provided to TI in registering for your User Account is current, complete, and correct, and that you will promptly update
+such information following any change which renders it incomplete or incorrect. You are responsible for maintaining the
+confidentiality of your account and password and for restricting access to your computer, and you agree to accept
+responsibility for all activities that occur under your account or password. TI may access, refuse service, or cancel
+orders in respect of, place restrictions on, remove or edit content in, or terminate your User Account without notice,
+at any time and for any reason, including without limitation, if TI suspects any information provided by you is untrue,
+inaccurate, incomplete, not current, misleading, or fraudulent. (See Section 4 above for additional limitations.)
+
+COMPANY ACCOUNT: 
+
+The administrator User Account (“Company Administrator”) of Your company’s myTI profile (“Company Account”), will be
+responsible for identifying, authenticating, and approving any users’ access to Your Company Account (“Approved Users”). 
+
+If Your company transacts with TI through multiple affiliated entities, TI may associate Your Company Account and the
+Company Accounts of such affiliated entities (together, the “Associated Company Accounts”) under one or more central
+administrator User Account (the “Super Administrator”).  The Super Administrator will be a user within the Associated
+Company Accounts reasonably nominated by TI and validated by such nominated user.  The Super Administrator will have a
+common view of activities and administrative capabilities across each of the Associated Company Accounts, including but
+not limited to the ability to, (1) provision and administer roles and delegate permissions for Approved Users and
+Company Administrators, (2) view current and past orders and invoices, (3) view outstanding balances, unused funds
+and unutilized credit, (4) change or update registration or similar information related to an Associated Company
+Account, (5) create or delete Associated Company Accounts and (6) utilize other administrative capabilities that may be
+offered by TI from time to time in TI’s sole discretion.  A Super Administrator may also act as a Company Administrator
+for an Associated Company Account if a separate user is not identified and provisioned as the Company Administrator for
+such Associated Company Account.  For clarity, Approved Users of Associated Company Accounts do not have view or
+administrative capabilities outside of their own Company Account.  As a security feature, if TI has good faith reason
+to believe a Super Administrator account has been compromised or if there is no activity under a Super Administrator
+account for an extended period of time, TI may suspend that Super Administrator account, which may result in the
+suspension of all User Accounts for the Associated Company Accounts and may impact Your ability to transact with TI.
+If You do not want Your Company Account associated with Associated Company Accounts under a Super Administrator or if
+you have questions about the Super Administrator role, please contact the TI support center.
+
+Your Super Administrator and Company Administrator (collectively and as applicable, “Administrators”) assume
+responsibility for controlling unauthorized access by users not associated with Your company. By federating or
+otherwise associating a Company Account with a Super Administrator or a Company Account with any Approved Users’ myTI
+profile, Your Administrators accept responsibility for maintaining the confidentiality and timely and proper
+termination of any Approved User’s myTI profile associated with such Company Account or association of a Company
+Account with Associated Company Accounts. TI is not responsible for any harm caused by Approved Users, Administrators
+or individuals who were not authorized to access a Company Account but who gained access because usernames, passwords,
+or accounts were not replaced, promptly terminated or otherwise properly safeguarded. Furthermore, TI is not
+responsible for the accurate or proper nomination and provisioning of Administrators, the validation of an
+Administrator, the transition of an Administrator’s role and responsibilities from one User Account to another,
+or the accurate association of Company Accounts to one another. Your Administrators are solely responsible for all
+activities under  a Company Account and agrees to immediately notify TI of any unauthorized use. Your Administrators
+agree to make every reasonable effort to prevent unauthorized third parties from accessing a Company Account. Any
+access to and management of a Company Account is subject to these Terms of Use and applicable user documentation
+provided by TI.
+
+6. Information You Post or Submit
+
+Certain features of TI Services may allow you to post or submit information. You may post reviews, comments, videos,
+and other content and communications, and submit suggestions, ideas, comments, questions, or other information, so long
+as such content is not proprietary, confidential, illegal, obscene, threatening, defamatory, invasive of privacy,
+infringing of intellectual property rights, provided in violation of your obligations (ethical, legal, or otherwise),
+or otherwise injurious to third parties or objectionable, as determined by TI in TI’s sole discretion, and does not
+consist of or contain software viruses, political campaigning, commercial solicitation, or any form of “spam”. You may
+not use a false e-mail address, impersonate any person or entity, or otherwise mislead as to the origin of any
+information or other content.
+
+If you do post or submit information, you grant TI a nonexclusive, royalty-free, perpetual, irrevocable, and fully
+sublicensable right to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute,
+and display such content throughout the world in any media. You grant TI and its sublicensees the right to use the
+name that you submit in connection with such content. You represent and warrant that you own or otherwise control all
+of the rights to the content that you post, that you have acquired all necessary rights in such content to enable you
+to grant to TI the rights in such content described herein, that the content is accurate, that use of the content you
+supply does not violate this policy and will not cause injury to any person or entity, and that you will indemnify TI
+for all claims resulting from content you supply. You agree to cooperate with TI as may be reasonably necessary to
+evidence or effectuate these rights and obligations. TI has the right but not the obligation to monitor and edit or
+remove any activity or content. TI takes no responsibility and assumes no liability for any content posted by you or
+any third party.
+
+7. Specific Notice Regarding Software
+
+Any software that is made available to download from TI Services (“Software”) is copyrighted. Use of this Software
+is governed by the license terms that accompany or are included with such Software (“License Terms”). Please review
+all License Terms carefully before downloading and using the Software. The following terms shall apply to Software for
+which there are no accompanying or included terms: Evaluation, Development and Demonstration Software License Agreement.
+
+8. Specific Notice Regarding Linking and Content from Third Party Websites
+
+TI permits text links to TI’s websites using the plain text name of the site or the plain text name of Texas
+Instruments Incorporated; provided that such linking does not:
+
+    I. incorporate, display, or replicate any content from TI’s Websites (e.g., by directly hosting TI
+       content or in-lining, framing or creating other browser or border environments around TI content);
+
+    II. use any of TI’s copyrighted information or logos, designs, slogans, product trademarks or service
+        marks in or with such links unless otherwise expressly agreed by TI in writing;
+
+    III. present false or misleading information or impressions about TI products or services;
+
+    IV. suggest that TI promotes, endorses, or has any relationship with any third party or its
+        opinions, website, products, or services; or
+
+    V. result from use of any automated programs, data mining, robots, scrapers, web
+       crawlers, or similar data gathering or extraction methods.
+
+TI may provide links to, or embedded content from, websites maintained by third parties. Such third party websites are
+not under TI’s control and TI is not responsible for the content, products, services or other materials on or
+available through such websites or the actions of the operators of such websites. TI provides links and access to
+such third party websites only as a convenience and TI does not endorse the content, products, services, or operators
+of such websites. Use of third party websites, features, and tools is governed by the applicable terms of use and
+privacy practices of such websites and services.
+
+9. Business Uses of TI Services
+
+If you use TI Services on behalf of a business, that business accepts these terms and you represent and warrant that
+you are authorized to provide such acceptance on behalf of the business. Further you and the business agree that it
+will hold harmless and indemnify TI and its subsidiaries, officers, agents, and employees from any claim, suit or
+action arising from or related to the use of TI Services or violation of the Terms of Use or Service Terms, including
+any liability or expense arising from claims, losses, damages, suits, judgments, litigation costs, and attorneys’ fees.
+
+10. Warranties and Disclaimers
+
+TI SERVICES ARE PROVIDED STRICTLY “AS IS” AND WITH “ALL FAULTS”. TI MAKES NO WARRANTIES OR REPRESENTATIONS WITH REGARD
+TO TI SERVICES OR USE OF TI SERVICES, EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING FOR ACCURACY, COMPLETENESS,
+OR SECURITY. TI DISCLAIMS ANY WARRANTY OF TITLE AND ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, QUIET ENJOYMENT, QUIET POSSESSION, AND NON-INFRINGEMENT OF ANY THIRD PARTY INTELLECTUAL PROPERTY RIGHTS WITH
+REGARD TO TI SERVICES OR USE THEREOF. TI WILL NOT BE LIABLE FOR AND WILL NOT DEFEND OR INDEMNIFY YOU AGAINST ANY THIRD
+PARTY INFRINGEMENT CLAIM THAT RELATES TO OR IS BASED ON A COMBINATION OF ANY ITEMS OR PRODUCTS PROVIDED IN TI SERVICES.
+IN NO EVENT WILL TI BE LIABLE FOR ANY ACTUAL, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR INDIRECT DAMAGES, HOWEVER CAUSED,
+ON ANY THEORY OF LIABILITY AND WHETHER OR NOT TI HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, ARISING IN ANY
+WAY OUT OF TI SERVICES OR YOUR USE OF TI SERVICES.
+
+TI reserves the right to discontinue or to make corrections, enhancements, improvements, and other changes to TI
+Services, or its semiconductor products and services at any time and in its sole discretion. With respect to TI
+products, please see our Product change notification and Product obsolescence policies (viewable here). TI strongly
+encourages customers to purchase TI parts either directly from TI, or from TI Authorized Semiconductor Distributors
+listed by region and country on the following webpage. You should obtain the latest relevant information before using
+TI Services or placing orders and should verify that such information is current and complete.
+
+TI products are sold subject to separate terms (see, for example, TI’s Terms of Sale and Terms of Sale for TI Store
+Transactions) as agreed by TI at the time of order acknowledgment.
+
+TI may provide you with technical, applications, or design advice (including reference designs), quality
+characterization, reliability data, or other services. TI assumes no liability and makes no representations or
+warranties regarding such services or items. You are solely responsible for your products and applications, including
+those using TI products. To minimize the risks associated with your products and applications, you should provide
+adequate design and operating safeguards.
+
+TI does not warrant or represent that any license, either express or implied, is granted under any patent right,
+copyright, mask work right, or other intellectual property right relating to any combination, machine, or process
+in which TI products or services are used. Information published by TI regarding third-party products or services
+does not constitute a license to use such products or services or a warranty or endorsement thereof. Use of such
+information may require a license from a third party under the patents or other intellectual property of the third
+party, or a license from TI under the patents or other intellectual property of TI.
+
+Resale of TI products or services with statements different from or beyond the parameters stated by TI for that
+product or service voids all express and any implied warranties for the associated TI product or service and is
+an unfair and deceptive business practice. TI is not responsible or liable for any such statements.
+
+You are solely responsible for the design, validation, and testing of your applications as well as for compliance
+with all legal, regulatory, and safety-related requirements concerning your applications. Industry best practices
+generally require that you conduct qualification tests on actual applications taking into account possible environmental
+and other conditions that your application may encounter. You represent that, with respect to your applications, you have
+all the necessary expertise to create and implement safeguards that (1) anticipate dangerous consequences of failures,
+(2) monitor failures and their consequences, and (3) lessen the likelihood of failures that might cause harm, and to
+take appropriate remedial actions. You agree that prior to using or distributing any systems that include TI products,
+you will thoroughly test such systems and the functionality of such TI products as used in such systems.
+
+Unless TI has explicitly designated an individual TI product as meeting the requirements of a particular industry
+standard (e.g., ISO/TS 16949 and ISO 26262), TI is not responsible for any failure to meet such industry standard
+requirements.
+
+Where TI specifically promotes TI products as facilitating functional safety or as compliant with industry functional
+safety standards, such TI products are intended to help enable customers to design and create their own applications
+that meet applicable functional safety standards and requirements. Using TI products in an application does not by
+itself establish any safety features in the application. You must ensure compliance with safety-related requirements
+and standards applicable to your applications.
+
+TI may expressly designate certain TI products as completing a particular qualification (e.g., Q100, Military Grade,
+or Enhanced Product). You agree that you have the necessary expertise to select the TI product with the appropriate
+qualification designation for its applications and that proper TI product selection is at your own risk. You are solely
+responsible for compliance with all legal and regulatory requirements in connection with such selection.
+
+You may not use any TI products in life-critical medical equipment unless authorized officers of the parties have
+executed a special contract specifically governing such use. Life-critical medical equipment is medical equipment
+where failure of such equipment would cause serious bodily injury or death (e.g., life support, pacemakers,
+defibrillators, heart pumps, neurostimulators, and implantables). Such equipment includes, without limitation,
+all medical devices identified by the U.S. Food and Drug Administration as Class III devices and equivalent
+classifications outside the U.S.
+
+You will fully indemnify TI and its representatives against any damages, costs, losses, and/or liabilities arising
+out of your non-compliance with this section.
+
+11. Privacy and Website Policies, Modification, and Severability
+
+Please review our Privacy Policy (including our Cookie Policy), which also governs your use of TI Services, to
+understand our practices. Please review our Service Terms and other policies posted on this site. These terms and
+policies also govern your use of TI Services. We reserve the right to make changes to our site, policies, Service
+Terms, and these Terms of Use at any time without prior notice to you. When you visit TI sites or use TI Services you
+are accepting the current version of these Terms of Use. These Terms of Use supersede all previous versions. If any of
+these conditions shall be deemed invalid, void, or for any reason unenforceable, that condition shall be deemed
+severable and shall not affect the validity and enforceability of any remaining condition.
+
+12. Copyright Complaints
+
+If you believe that your work was copied or posted on our websites in a way that constitutes copyright infringement,
+please notify our designated agent using the contact information below. You represent and warrant that all information
+contained in your submission is true, complete and accurate. We reserve the right to disregard any notice that is
+unclear or fails to comply with applicable legal requirements.
+
+Designated Agent (Re: Copyright Infringement Claim)
+Texas Instruments Incorporated
+12500 TI Boulevard
+Dallas, Texas 75243
+USA
+e-mail:copyright@list.ti.com
+Tel: 972-995-2011
+
+If you wish to report any other inappropriate or offensive content, please do so using our Information Request Form.
+
+13. Export Control
+
+Exports, re-exports, and transfers of Products may be subject to U.S. export controls and sanctions. Buyer acknowledges
+and agrees that: (i) it will comply with all applicable laws and regulations; (ii) Products may not be exported,
+re-exported, sold or transferred to U.S. embargoed, sanctioned, or restricted destinations, persons, or entities
+without first obtaining any necessary governmental authorization; and (iii) it will provide notice of these compliance
+obligations to any party obtaining Product from Buyer.
+
+Unless any necessary U.S. and other applicable government authorizations are obtained in advance, Buyer shall not
+export, re-export, transfer, purchase, or sell any Product: (i) for a military end use; (ii) to a military end user;
+or (iii) for the design, development, fabrication, or use of nuclear, chemical, or biological weapons or missile
+technology. For additional information, see Part 744 of the U.S. Export Administration Regulations.
+
+Each party shall, at its own expense, secure export and import authorizations necessary to fulfill its obligations
+under this Section 13.  Buyer will indemnify and hold TI (including its agents and representatives) harmless against
+any damages, costs, losses, and/or liabilities arising out of any Buyer non-compliance with this section.  If any
+required authorization cannot be obtained, or in the event Buyer breaches this Section 13, TI may terminate, cancel,
+or otherwise be excused from any obligations that it may have under these Terms.  Product classifications are for TI
+convenience only and shall not be construed as a representation or warranty of any kind; Buyer is responsible for its
+own compliance obligations.   This section will survive any termination or expiration of these Terms.
+
+14. General
+
+Any claim relating to TI Services will be governed by and interpreted in accordance with the laws of the State of
+Texas, without reference to its conflict-of-laws principles. Any dispute arising out of or related to your use of
+this site will be brought in, and you hereby consent to exclusive jurisdiction and venue in, the state and federal
+courts sitting in Dallas County, Texas. You agree to waive all defenses of lack of personal jurisdiction and forum
+non-conveniens and agree that process may be served in a manner authorized by applicable law or court rule.
+
+TI operates or manages this site from its offices within the United States. TI makes no representations that TI
+Services referenced on this site are appropriate or available for use in other areas of the world. Those who access
+this site from locations outside the United States are responsible for compliance with applicable local laws.
+
+Where TI has provided you with a translation of the English language version of information on TI websites, you agree
+that the translation is provided for your convenience only and that the applicable English language versions will govern
+your relationship with TI. If there is any contradiction between the English language version of information on TI
+websites and the translation, the English language version will take precedence.
+
+Effective Date: May 29, 2018
