@@ -1,11 +1,15 @@
-import sys
+#!/usr/bin/env python3
+
 import math
-from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton, QProgressBar
-from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QFont, QColor, QPainter, QLinearGradient
-from pyqtgraph import PlotWidget
+import sys
+
 import pyqtgraph as pg
-import random
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
+                             QProgressBar, QPushButton, QVBoxLayout, QWidget)
+from pyqtgraph import PlotWidget
+
 
 class GCS(QMainWindow):
     def __init__(self):
@@ -61,8 +65,8 @@ class GCS(QMainWindow):
         self.graph_widget = PlotWidget()
         self.graph_widget.setBackground("#000000")
         self.graph_widget.setTitle("UAV Telemetry Data", color="#00CED1", size="20pt")
-        self.graph_widget.setLabel('left', 'Value', color="#00CED1")
-        self.graph_widget.setLabel('bottom', 'Time (s)', color="#00CED1")
+        self.graph_widget.setLabel("left", "Value", color="#00CED1")
+        self.graph_widget.setLabel("bottom", "Time (s)", color="#00CED1")
         self.graph_widget.showGrid(x=True, y=True)
         self.graph_widget.setYRange(0, 100)
         self.layout.addWidget(self.graph_widget)
@@ -99,7 +103,8 @@ class GCS(QMainWindow):
         gauge.setMaximum(max_value)
         gauge.setValue(0)
         gauge.setFormat("%v")
-        gauge.setStyleSheet(f"""
+        gauge.setStyleSheet(
+            f"""
             QProgressBar {{
                 border: 2px solid {color};
                 border-radius: 5px;
@@ -110,7 +115,8 @@ class GCS(QMainWindow):
             QProgressBar::chunk {{
                 background-color: {color};
             }}
-        """)
+        """
+        )
         gauge_layout.addWidget(gauge)
 
         return gauge_widget
@@ -144,9 +150,10 @@ class GCS(QMainWindow):
         self.graph_widget.plot(self.speed_data, pen=pg.mkPen(color="#FF4500", width=2), name="Speed")
         self.graph_widget.plot(self.battery_data, pen=pg.mkPen(color="#00FF00", width=2), name="Battery")
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle('Fusion')
+    app.setStyle("Fusion")
 
     # Set color palette
     palette = app.palette()
