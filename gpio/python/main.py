@@ -17,8 +17,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-def main():
-    print("Es-Selam World!")
+import os
 
-if __name__ == "__main__":
-    main()
+print('Es Selam, World!')

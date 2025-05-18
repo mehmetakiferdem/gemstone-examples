@@ -1,15 +1,13 @@
 .venv
-.downloads
-.src
 .tmp
-.ti
+.env
 
 src/
+build/
 
 __pycache__
 __marimo__
 *.py[oc]
-build/
 dist/
 wheels/
 *.egg-info

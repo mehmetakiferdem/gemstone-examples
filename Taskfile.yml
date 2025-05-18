@@ -4,13 +4,15 @@
 version: '3'
 
 vars:
-  DOWNLOAD_DIR: '{{ .ROOT_DIR }}/.downloads'
-  TI_INSTALL_DIR: '{{ .ROOT_DIR }}/.ti'
-  TEXAS_J722_RTOS_SDK_URL: https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/ti-processor-sdk-rtos-j722s-evm-10_01_00_04.tar.gz
-  TEXAS_J722_MCUSW_SDK_URL: https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/MCUSW_J722S_10.01.00.03.zip
+  MACHINE: '{{ .MACHINE | default "t3-gem-o1" }}'
+  BUILDDIR: '{{ .ROOT_DIR }}/build'
+  DOWNLOAD_DIR: '{{.BUILDDIR}}/downloads'
+  TOOLCHAIN_DIR: '{{.BUILDDIR}}/toolchain'
+  TI_INSTALL_DIR: '{{.TOOLCHAIN_DIR}}/ti'
+  TOOLCHAIN_URL: 'https://github.com/t3gemstone/toolchains/archive/refs/tags/prebuilt-toolchain-ubuntu-jammy-1.0.1.tar.xz'
 
 env:
-  TI_SDK_PATH: '{{ .ROOT_DIR }}/.ti/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
+  TI_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
 
 tasks:
 
@@ -18,33 +20,13 @@ tasks:
     silent: true
     cmds:
       - task --list-all --summary
-      - echo -e "\nEnvironments:\n"
+      - echo
+      - echo "Environment:"
+      - echo
+      - echo "  MACHINE         = '{{ .MACHINE }}'"
+      - echo "  BUILDDIR        = '{{ .BUILDDIR }}'"
       - echo "  DOWNLOAD_DIR    = '{{ .DOWNLOAD_DIR }}'"
+      - echo "  TOOLCHAIN_DIR   = '{{ .TOOLCHAIN_DIR }}'"
       - echo "  TI_INSTALL_DIR  = '{{ .TI_INSTALL_DIR }}'"
       - echo "  TI_SDK_PATH     = '{{ .TI_SDK_PATH }}'"
-      - echo ""
-
-  download:
-    internal: true
-    silent: true
-    cmds:
-      - mkdir -p {{ .DOWNLOAD_DIR }}
-      - wget --no-clobber --continue --quiet --show-progress -O {{ .FILEPATH }} {{ .URL }} || true
-      - echo {{ .FILEPATH }}
-    vars:
-      FILEPATH: '{{ .DOWNLOAD_DIR }}/{{ .FILENAME }}'
-    requires:
-      vars: [ URL, FILENAME ]
-
-  install-ti-sdk:
-    cmds:
-      - task: download
-        vars:
-          URL: '{{ .TEXAS_J722_RTOS_SDK_URL }}'
-          FILENAME: 'ti-j722s-rtos-sdk.tar.gz'
-      - task: download
-        vars:
-          URL: '{{ .TEXAS_J722_MCUSW_SDK_URL }}'
-          FILENAME: 'mcusw-j722s.zip'
-      - tar -xf {{ .DOWNLOAD_DIR }}/*.tar.* --skip-old-files --directory {{ .TI_INSTALL_DIR }}
-      - unzip -n {{ .DOWNLOAD_DIR }}/*.zip -d {{ .TI_INSTALL_DIR }}
+      - echo

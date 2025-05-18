@@ -34,6 +34,13 @@ user@host:$ devbox shell
 📦 devbox:examples> devbox run marimo
 ```
 
+4. Cross compile c/c++ project
+
+```bash
+📦 devbox:examples> task fetch
+📦 devbox:examples> task build project=gpio
+```
+
 ### Screencast
 
 [![asciicast](https://asciinema.org/a/C5qNKCAyAuwIgoIxx0Wk1E7L2.svg)](https://asciinema.org/a/C5qNKCAyAuwIgoIxx0Wk1E7L2)

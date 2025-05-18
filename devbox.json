@@ -6,10 +6,11 @@
     "go-task@latest",
     "vcstool@latest",
     "wget@latest",
-    "unzip@latest"
+    "unzip@latest",
+    "meson@latest"
   ],
   "env": {
-    "VENV_DIR": ".venv",
+    "VENV_DIR":     ".venv",
     "UV_LINK_MODE": "copy"
   },
   "shell": {
@@ -22,11 +23,12 @@
       "source <(devbox completion $(basename $SHELL))",
       "source <(task --completion $(basename $SHELL))",
       "source <(_MARIMO_COMPLETE=bash_source marimo)",
-      "export PS1='📦 devbox:\\[\\033[01;34m\\]\\W\\[\\033[00m\\]> '"
+      "export PS1='📦 devbox:\\[\\033[01;34m\\]\\W\\[\\033[00m\\]> '",
+      "test -f .env && true || cp .env.example .env"
     ],
     "scripts": {
       "destroy": "rm -rf .venv && rm -rf .devbox && deactivate",
-      "marimo": "marimo --yes edit notebook.py --port 8001",
+      "marimo":  "marimo --yes edit notebook.py --port 8001",
       "build": [
         "uv run pyinstaller --onefile --noconfirm --windowed --specpath=build --name gcs gui/gcs.py"
       ]
