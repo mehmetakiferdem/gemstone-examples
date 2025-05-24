@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.11.7"
+__generated_with = "0.13.11"
 app = marimo.App(
     width="medium",
     app_title="Gemstone Examples",
