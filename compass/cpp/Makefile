@@ -1,9 +1,9 @@
 TARGET = compass
 
 PROJDIR := $(realpath $(CURDIR)/../..)
-BUILDDIR := $(PROJDIR)/build/$(TARGET)/c
+BUILDDIR := $(PROJDIR)/build/$(TARGET)/cpp
 
-C_SOURCES = MMC5603.c main.c
+CXX_SOURCES = MMC5603.cpp main.cpp
 
 LDFLAGS += -lm
 

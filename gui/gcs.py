@@ -21,9 +21,9 @@ import math
 import sys
 
 import pyqtgraph as pg
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QColor, QFont
-from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
                              QProgressBar, QPushButton, QVBoxLayout, QWidget)
 from pyqtgraph import PlotWidget
 

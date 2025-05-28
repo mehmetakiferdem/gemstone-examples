@@ -30,3 +30,8 @@ tasks:
       - echo "  TI_INSTALL_DIR  = '{{ .TI_INSTALL_DIR }}'"
       - echo "  TI_SDK_PATH     = '{{ .TI_SDK_PATH }}'"
       - echo
+
+  destroy:
+    cmds:
+      - rm -rf .venv
+      - rm -rf .devbox
