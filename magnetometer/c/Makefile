@@ -1,4 +1,4 @@
-TARGET = compass
+TARGET = magnetometer
 
 PROJDIR := $(realpath $(CURDIR)/../..)
 BUILDDIR := $(PROJDIR)/build/$(TARGET)/c
