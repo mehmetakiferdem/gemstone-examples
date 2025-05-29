@@ -20,6 +20,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <threads.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -35,7 +36,7 @@ void delay_ms(int ms)
 {
     struct timespec request = {0, ms * 1.0E6};
     struct timespec remaining;
-    nanosleep(&request, &remaining);
+    thrd_sleep(&request, &remaining);
 }
 
 int main(void)

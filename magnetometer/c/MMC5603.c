@@ -25,6 +25,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include <threads.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -39,7 +40,7 @@ static void delay_ms(int ms)
 {
     struct timespec request = {.tv_sec = 0, .tv_nsec = ms * 1.0E6};
     struct timespec remaining;
-    nanosleep(&request, &remaining);
+    thrd_sleep(&request, &remaining);
 }
 
 static bool read_register(mmc5603_t* dev, uint8_t reg, uint8_t* value)

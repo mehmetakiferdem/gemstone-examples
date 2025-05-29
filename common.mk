@@ -24,7 +24,7 @@ CXXFLAGS += \
 	-Werror \
 	-Wextra \
 	-Wno-error=effc++ \
-	-Wno-error=unused-parameter \
+	-Wno-error=unused-parameter
 
 # Use CXX for linking when C++ objects are present, otherwise use CC
 LINKER = $(if $(CXX_OBJECTS),$(CXX),$(CC))

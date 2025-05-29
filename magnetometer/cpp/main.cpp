@@ -20,6 +20,7 @@
 #include <csignal>
 #include <ctime>
 #include <iostream>
+#include <threads.h>
 #include <unistd.h>
 
 static volatile bool running = true;
@@ -34,7 +35,7 @@ void delay_ms(int ms)
 {
     struct timespec request = {0, ms * 1'000'000};
     struct timespec remaining;
-    nanosleep(&request, &remaining);
+    thrd_sleep(&request, &remaining);
 }
 
 int main(void)

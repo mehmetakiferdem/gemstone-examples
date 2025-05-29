@@ -25,6 +25,7 @@
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include <threads.h>
 #include <unistd.h>
 
 MMC5603::MMC5603() {}
@@ -45,7 +46,7 @@ void MMC5603::delay_ms(int ms)
 {
     struct timespec request = {0, ms * 1'000'000};
     struct timespec remaining;
-    nanosleep(&request, &remaining);
+    thrd_sleep(&request, &remaining);
 }
 
 bool MMC5603::read_register(uint8_t reg, uint8_t& value)
