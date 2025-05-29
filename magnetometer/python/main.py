@@ -1,3 +1,4 @@
+#!.venv/bin/python3
 """
 Copyright (c) 2025 by T3 Foundation. All rights reserved.
 
