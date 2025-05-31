@@ -4,12 +4,14 @@
 version: '3'
 
 vars:
-  MACHINE: '{{ .MACHINE | default "t3-gem-o1" }}'
-  BUILDDIR: '{{ .ROOT_DIR }}/build'
-  DOWNLOAD_DIR: '{{.BUILDDIR}}/downloads'
-  TOOLCHAIN_DIR: '{{.BUILDDIR}}/toolchain'
-  TI_INSTALL_DIR: '{{.TOOLCHAIN_DIR}}/ti'
-  TOOLCHAIN_URL: 'https://github.com/t3gemstone/toolchains/archive/refs/tags/prebuilt-toolchain-ubuntu-jammy-1.0.1.tar.xz'
+  DISTRO_BASE: '{{ .DISTRO_BASE | default "ubuntu" }}'
+  DISTRO_SUITE: '{{ .DISTRO_SUITE | default "jammy" }}'
+  DISTRO_TYPE: '{{ .DISTRO_TYPE | default "minimal" }}'
+  BUILD_DIR: '{{ .ROOT_DIR }}/build'
+  DOWNLOAD_DIR: '{{ .BUILD_DIR }}/downloads'
+  TOOLCHAINS_URL: 'https://github.com/t3gemstone/toolchains/releases/latest/download/gemstone-toolchains-ubuntu-jammy.tar.xz'
+  TOOLCHAINS_DIR: '{{ .BUILD_DIR }}/{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}'
+  TI_INSTALL_DIR: '{{ .TOOLCHAIN_DIR }}/ti'
 
 env:
   TI_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
@@ -24,12 +26,48 @@ tasks:
       - echo "Environment:"
       - echo
       - echo "  MACHINE         = '{{ .MACHINE }}'"
-      - echo "  BUILDDIR        = '{{ .BUILDDIR }}'"
+      - echo "  BUILD_DIR        = '{{ .BUILD_DIR }}'"
       - echo "  DOWNLOAD_DIR    = '{{ .DOWNLOAD_DIR }}'"
-      - echo "  TOOLCHAIN_DIR   = '{{ .TOOLCHAIN_DIR }}'"
+      - echo "  TOOLCHAINS_DIR   = '{{ .TOOLCHAINS_DIR }}'"
       - echo "  TI_INSTALL_DIR  = '{{ .TI_INSTALL_DIR }}'"
       - echo "  TI_SDK_PATH     = '{{ .TI_SDK_PATH }}'"
       - echo
+
+  wget:
+    internal: true
+    cmds:
+      - mkdir -p $(dirname {{ .PATH }})
+      - wget --no-clobber --continue --quiet --show-progress -O {{ .PATH }} {{ .URL }} || true
+    requires:
+      vars: [ URL, PATH ]
+
+  fetch:
+    silent: true
+    cmds:
+      - mkdir -p '{{ .TOOLCHAINS_DIR }}'
+      - task: wget
+        vars:
+          URL: '{{ .TOOLCHAINS_URL }}'
+          PATH: 'build/downloads/gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz'
+      - tar xf 'build/downloads/gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz' --directory "{{ .TOOLCHAINS_DIR }}"
+    status:
+      - test -f '{{ .TOOLCHAINS_URL }}'
+
+  build:
+    cmds:
+      - |
+        pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        make -C '{{ .project }}'
+    requires:
+      vars: [project]
+
+  clean:
+    cmds:
+      - |
+        pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        make -C '{{ .project }}' clean
+    requires:
+      vars: [project]
 
   destroy:
     cmds:
