@@ -9,10 +9,15 @@ vars:
   DISTRO_TYPE: '{{ .DISTRO_TYPE | default "minimal" }}'
   BUILD_DIR: '{{ .ROOT_DIR }}/build'
   DOWNLOAD_DIR: '{{ .BUILD_DIR }}/downloads'
-  TOOLCHAINS_URL: 'https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-ubuntu-jammy.tar.xz'
   TOOLCHAINS_DIR: '{{ .BUILD_DIR }}/{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}'
-  TI_INSTALL_DIR: '{{ .TOOLCHAIN_DIR }}/ti'
+  TI_INSTALL_DIR: '{{ .BUILD_DIR }}/ti'
   PROJECT: '{{ .PROJECT | default "." }}'
+  URLS:
+    map: {
+      toolchains: 'https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-ubuntu-jammy.tar.xz',
+      texas_j722_rtos_sdk: 'https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/ti-processor-sdk-rtos-j722s-evm-10_01_00_04.tar.gz',
+      texas_j722_mcusw_sdk: 'https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/MCUSW_J722S_10.01.00.03.zip',
+    }
 
 env:
   TI_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
@@ -47,14 +52,34 @@ tasks:
   fetch:
     silent: true
     cmds:
+      - rm -rf '{{ .TOOLCHAINS_DIR }}'
       - mkdir -p '{{ .TOOLCHAINS_DIR }}'
       - task: wget
         vars:
-          URL: '{{ .TOOLCHAINS_URL }}'
-          PATH: 'build/downloads/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz'
-      - tar xf 'build/downloads/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz' --directory "{{ .TOOLCHAINS_DIR }}"
+          URL: '{{ get .URLS "toolchains" }}'
+          PATH: '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz'
+      - tar xf '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz' --directory "{{ .TOOLCHAINS_DIR }}"
     status:
-      - test -f '{{ .TOOLCHAINS_URL }}'
+      - test -f '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-ubuntu-jammy.tar.xz'
+
+  fetch-ti:
+    silent: true
+    cmds:
+      - rm -rf '{{ .TI_INSTALL_DIR }}'
+      - mkdir -p '{{ .TI_INSTALL_DIR }}'
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "texas_j722_rtos_sdk" }}'
+          PATH: '{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz'
+      - tar xf '{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz' --directory "{{ .TI_INSTALL_DIR }}"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "texas_j722_mcusw_sdk" }}'
+          PATH: '{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip'
+      - unzip -q '{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip' -d "{{ .TI_INSTALL_DIR }}"
+    status:
+      - test -f '{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz'
+      - test -f '{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip'
 
   build:
     cmds:
