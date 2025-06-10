@@ -9,7 +9,7 @@ vars:
   DISTRO_TYPE: '{{ .DISTRO_TYPE | default "minimal" }}'
   BUILD_DIR: '{{ .ROOT_DIR }}/build'
   DOWNLOAD_DIR: '{{ .BUILD_DIR }}/downloads'
-  TOOLCHAINS_URL: 'https://github.com/t3gemstone/toolchains/releases/latest/download/gemstone-toolchains-ubuntu-jammy.tar.xz'
+  TOOLCHAINS_URL: 'https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-ubuntu-jammy.tar.xz'
   TOOLCHAINS_DIR: '{{ .BUILD_DIR }}/{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}'
   TI_INSTALL_DIR: '{{ .TOOLCHAIN_DIR }}/ti'
 
@@ -48,8 +48,8 @@ tasks:
       - task: wget
         vars:
           URL: '{{ .TOOLCHAINS_URL }}'
-          PATH: 'build/downloads/gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz'
-      - tar xf 'build/downloads/gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz' --directory "{{ .TOOLCHAINS_DIR }}"
+          PATH: 'build/downloads/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz'
+      - tar xf 'build/downloads/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.xz' --directory "{{ .TOOLCHAINS_DIR }}"
     status:
       - test -f '{{ .TOOLCHAINS_URL }}'
 
