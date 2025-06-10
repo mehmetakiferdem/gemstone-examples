@@ -33,7 +33,7 @@ MMC56X3_DEFAULT_ADDRESS = 0x30
 MMC56X3_CHIP_ID = 0x10
 
 
-class MMC56x3Register(IntEnum):
+class MMC56X3Register(IntEnum):
     PRODUCT_ID = 0x39
     CTRL0_REG = 0x1B
     CTRL1_REG = 0x1C
@@ -128,7 +128,7 @@ class MMC5603:
             return False
 
         # Read chip ID
-        chip_id = self._read_register(MMC56x3Register.PRODUCT_ID)
+        chip_id = self._read_register(MMC56X3Register.PRODUCT_ID)
         if chip_id is None:
             print("Failed to read chip ID")
             self.close()
@@ -155,7 +155,7 @@ class MMC5603:
             return False
 
         # Software reset
-        if not self._write_register(MMC56x3Register.CTRL1_REG, 0x80):
+        if not self._write_register(MMC56X3Register.CTRL1_REG, 0x80):
             return False
 
         self._delay_ms(20)
@@ -179,12 +179,12 @@ class MMC5603:
             return False
 
         # Turn on SET bit
-        if not self._write_register(MMC56x3Register.CTRL0_REG, 0x08):
+        if not self._write_register(MMC56X3Register.CTRL0_REG, 0x08):
             return False
         self._delay_ms(1)
 
         # Turn on RESET bit
-        if not self._write_register(MMC56x3Register.CTRL0_REG, 0x10):
+        if not self._write_register(MMC56X3Register.CTRL0_REG, 0x10):
             return False
         self._delay_ms(1)
 
@@ -196,13 +196,13 @@ class MMC5603:
 
         if continuous:
             # Turn on cmm_freq_en bit
-            if not self._write_register(MMC56x3Register.CTRL0_REG, 0x80):
+            if not self._write_register(MMC56X3Register.CTRL0_REG, 0x80):
                 return False
             self.m_ctrl2_cache |= 0x10  # Turn on cmm_en bit
         else:
             self.m_ctrl2_cache &= ~0x10  # Turn off cmm_en bit
 
-        return self._write_register(MMC56x3Register.CTRL2_REG, self.m_ctrl2_cache)
+        return self._write_register(MMC56X3Register.CTRL2_REG, self.m_ctrl2_cache)
 
     def is_continuous_mode(self) -> bool:
         return (self.m_ctrl2_cache & 0x10) != 0
@@ -215,13 +215,13 @@ class MMC5603:
             return False, float("nan")
 
         # Trigger temperature measurement
-        if not self._write_register(MMC56x3Register.CTRL0_REG, 0x02):
+        if not self._write_register(MMC56X3Register.CTRL0_REG, 0x02):
             return False, float("nan")
 
         # Wait for measurement to complete
         timeout = 1000
         while timeout > 0:
-            status = self._read_register(MMC56x3Register.STATUS_REG)
+            status = self._read_register(MMC56X3Register.STATUS_REG)
             if status is None:
                 return False, float("nan")
             if status & 0x80:
@@ -232,7 +232,7 @@ class MMC5603:
         if timeout <= 0:
             return False, float("nan")
 
-        temp_data = self._read_register(MMC56x3Register.OUT_TEMP)
+        temp_data = self._read_register(MMC56X3Register.OUT_TEMP)
         if temp_data is None:
             return False, float("nan")
 
@@ -249,13 +249,13 @@ class MMC5603:
 
         if not self.is_continuous_mode():
             # Trigger one-shot measurement
-            if not self._write_register(MMC56x3Register.CTRL0_REG, 0x01):
+            if not self._write_register(MMC56X3Register.CTRL0_REG, 0x01):
                 return False, data
 
             # Wait for measurement to complete
             timeout = 1000
             while timeout > 0:
-                status = self._read_register(MMC56x3Register.STATUS_REG)
+                status = self._read_register(MMC56X3Register.STATUS_REG)
                 if status is None:
                     return False, data
                 if status & 0x40:
@@ -267,7 +267,7 @@ class MMC5603:
                 return False, data
 
         # Read 9 bytes of data
-        buffer = self._read_registers(MMC56x3Register.OUT_X_L, 9)
+        buffer = self._read_registers(MMC56X3Register.OUT_X_L, 9)
         if buffer is None or len(buffer) != 9:
             return False, data
 
@@ -309,16 +309,16 @@ class MMC5603:
 
         if rate == 1000:
             # High power mode for 1000 Hz
-            if not self._write_register(MMC56x3Register.ODR_REG, 255):
+            if not self._write_register(MMC56X3Register.ODR_REG, 255):
                 return False
             self.m_ctrl2_cache |= 0x80  # Turn on hpower bit
         else:
             # Normal mode
-            if not self._write_register(MMC56x3Register.ODR_REG, rate):
+            if not self._write_register(MMC56X3Register.ODR_REG, rate):
                 return False
             self.m_ctrl2_cache &= ~0x80  # Turn off hpower bit
 
-        return self._write_register(MMC56x3Register.CTRL2_REG, self.m_ctrl2_cache)
+        return self._write_register(MMC56X3Register.CTRL2_REG, self.m_ctrl2_cache)
 
     def get_data_rate(self) -> int:
         return self.m_odr_cache

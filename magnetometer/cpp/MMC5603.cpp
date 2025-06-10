@@ -114,7 +114,7 @@ bool MMC5603::init(const std::string& i2c_device, uint8_t address, int32_t senso
         return false;
     }
 
-    if (!read_register(static_cast<uint8_t>(MMC56x3Register::PRODUCT_ID), chip_id))
+    if (!read_register(static_cast<uint8_t>(MMC56X3Register::PRODUCT_ID), chip_id))
     {
         std::cerr << "Failed to read chip ID" << std::endl;
         ::close(m_fd);
@@ -157,7 +157,7 @@ bool MMC5603::reset()
         return false;
     }
 
-    if (!write_register(static_cast<uint8_t>(MMC56x3Register::CTRL1_REG), 0x80))
+    if (!write_register(static_cast<uint8_t>(MMC56X3Register::CTRL1_REG), 0x80))
     {
         return false;
     }
@@ -188,14 +188,14 @@ bool MMC5603::magnet_set_reset()
     }
 
     // Turn on SET bit
-    if (!write_register(static_cast<uint8_t>(MMC56x3Register::CTRL0_REG), 0x08))
+    if (!write_register(static_cast<uint8_t>(MMC56X3Register::CTRL0_REG), 0x08))
     {
         return false;
     }
     delay_ms(1);
 
     // Turn on RESET bit
-    if (!write_register(static_cast<uint8_t>(MMC56x3Register::CTRL0_REG), 0x10))
+    if (!write_register(static_cast<uint8_t>(MMC56X3Register::CTRL0_REG), 0x10))
     {
         return false;
     }
@@ -214,7 +214,7 @@ bool MMC5603::set_continuous_mode(bool continuous)
     if (continuous)
     {
         // Turn on cmm_freq_en bit
-        if (!write_register(static_cast<uint8_t>(MMC56x3Register::CTRL0_REG), 0x80))
+        if (!write_register(static_cast<uint8_t>(MMC56X3Register::CTRL0_REG), 0x80))
         {
             return false;
         }
@@ -225,7 +225,7 @@ bool MMC5603::set_continuous_mode(bool continuous)
         m_ctrl2_cache &= ~0x10; // Turn off cmm_en bit
     }
 
-    return write_register(static_cast<uint8_t>(MMC56x3Register::CTRL2_REG), m_ctrl2_cache);
+    return write_register(static_cast<uint8_t>(MMC56X3Register::CTRL2_REG), m_ctrl2_cache);
 }
 
 bool MMC5603::is_continuous_mode() const
@@ -251,7 +251,7 @@ bool MMC5603::read_temperature(float& temp)
     }
 
     // Trigger temperature measurement
-    if (!write_register(static_cast<uint8_t>(MMC56x3Register::CTRL0_REG), 0x02))
+    if (!write_register(static_cast<uint8_t>(MMC56X3Register::CTRL0_REG), 0x02))
     {
         return false;
     }
@@ -260,7 +260,7 @@ bool MMC5603::read_temperature(float& temp)
     timeout = 1000;
     do
     {
-        if (!read_register(static_cast<uint8_t>(MMC56x3Register::STATUS_REG), status))
+        if (!read_register(static_cast<uint8_t>(MMC56X3Register::STATUS_REG), status))
         {
             return false;
         }
@@ -277,7 +277,7 @@ bool MMC5603::read_temperature(float& temp)
         return false;
     }
 
-    if (!read_register(static_cast<uint8_t>(MMC56x3Register::OUT_TEMP), temp_data))
+    if (!read_register(static_cast<uint8_t>(MMC56X3Register::OUT_TEMP), temp_data))
     {
         return false;
     }
@@ -303,7 +303,7 @@ bool MMC5603::read_mag(MagData& data)
 
     if (!is_continuous_mode())
     {
-        if (!write_register(static_cast<uint8_t>(MMC56x3Register::CTRL0_REG), 0x01))
+        if (!write_register(static_cast<uint8_t>(MMC56X3Register::CTRL0_REG), 0x01))
         {
             return false;
         }
@@ -312,7 +312,7 @@ bool MMC5603::read_mag(MagData& data)
         timeout = 1000;
         do
         {
-            if (!read_register(static_cast<uint8_t>(MMC56x3Register::STATUS_REG), status))
+            if (!read_register(static_cast<uint8_t>(MMC56X3Register::STATUS_REG), status))
             {
                 return false;
             }
@@ -330,7 +330,7 @@ bool MMC5603::read_mag(MagData& data)
         }
     }
 
-    if (!read_registers(static_cast<uint8_t>(MMC56x3Register::OUT_X_L), buffer, 9))
+    if (!read_registers(static_cast<uint8_t>(MMC56X3Register::OUT_X_L), buffer, 9))
     {
         return false;
     }
@@ -374,7 +374,7 @@ bool MMC5603::set_data_rate(uint16_t rate)
     if (rate == 1000)
     {
         // High power mode for 1000 Hz
-        if (!write_register(static_cast<uint8_t>(MMC56x3Register::ODR_REG), 255))
+        if (!write_register(static_cast<uint8_t>(MMC56X3Register::ODR_REG), 255))
         {
             return false;
         }
@@ -383,14 +383,14 @@ bool MMC5603::set_data_rate(uint16_t rate)
     else
     {
         // Normal mode
-        if (!write_register(static_cast<uint8_t>(MMC56x3Register::ODR_REG), static_cast<uint8_t>(rate)))
+        if (!write_register(static_cast<uint8_t>(MMC56X3Register::ODR_REG), static_cast<uint8_t>(rate)))
         {
             return false;
         }
         m_ctrl2_cache &= ~0x80; // Turn off hpower bit
     }
 
-    return write_register(static_cast<uint8_t>(MMC56x3Register::CTRL2_REG), m_ctrl2_cache);
+    return write_register(static_cast<uint8_t>(MMC56X3Register::CTRL2_REG), m_ctrl2_cache);
 }
 
 uint16_t MMC5603::get_data_rate() const

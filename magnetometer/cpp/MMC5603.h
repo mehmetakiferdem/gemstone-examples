@@ -24,7 +24,7 @@
 constexpr uint8_t MMC56X3_DEFAULT_ADDRESS = 0x30;
 constexpr uint8_t MMC56X3_CHIP_ID = 0x10;
 
-enum class MMC56x3Register : uint8_t
+enum class MMC56X3Register : uint8_t
 {
     PRODUCT_ID = 0x39,
     CTRL0_REG = 0x1B,
