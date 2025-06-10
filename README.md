@@ -16,30 +16,43 @@ This repository contains example projects that demonstrate the features of T3 Ge
 
 All details related to the project can be found at https://docs.t3gemstone.org/en/tutorials. Below, only a summary of how to perform the installation is provided.
 
-1. Install jetify-devbox on the host computer.
+##### 1. Install jetify-devbox on the host computer.
 
 ```bash
 user@host:$ ./setup.sh
 ```
 
-2. After the installation is successful, activate the jetify-devbox shell to automatically install tools such as AstralUV, Qt6 Libraries etc.
+##### 2. After the installation is successful, activate the jetify-devbox shell to automatically install tools such as AstralUV, Qt6 Libraries, etc.
 
 ```bash
 user@host:$ devbox shell
 ```
 
-3. Start Notebook
+##### 3. Start notebook.
 
 ```bash
 📦 devbox:examples> devbox run marimo
 ```
 
-4. Cross compile C/C++ project
+##### 4. Download the toolchain.
+
+Toolchain includes tools that are needed for cross compiling projects such as `gcc`, `g++`, `ld`, etc. It also
+includes a sysroot which contains libraries for the target system.
 
 ```bash
 📦 devbox:examples> task fetch
-📦 devbox:examples> task clean project=serial/c
-📦 devbox:examples> task build project=serial/c
+```
+
+##### 5. Cross compile single C/C++ project.
+
+```bash
+📦 devbox:examples> task clean build PROJECT=serial/c
+```
+
+##### 6. Cross compile all C/C++ projects.
+
+```bash
+📦 devbox:examples> task clean build
 ```
 
 ### Screencast

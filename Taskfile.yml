@@ -12,9 +12,12 @@ vars:
   TOOLCHAINS_URL: 'https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-ubuntu-jammy.tar.xz'
   TOOLCHAINS_DIR: '{{ .BUILD_DIR }}/{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}'
   TI_INSTALL_DIR: '{{ .TOOLCHAIN_DIR }}/ti'
+  PROJECT: '{{ .PROJECT | default "." }}'
 
 env:
   TI_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
+
+dotenv: ['.env']
 
 tasks:
 
@@ -55,19 +58,17 @@ tasks:
 
   build:
     cmds:
+      - task: fetch
       - |
         pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
-        make -C '{{ .project }}'
-    requires:
-      vars: [project]
+        make -C '{{ .PROJECT }}'
 
   clean:
     cmds:
+      - task: fetch
       - |
         pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
-        make -C '{{ .project }}' clean
-    requires:
-      vars: [project]
+        make -C '{{ .PROJECT }}' clean
 
   destroy:
     cmds:
