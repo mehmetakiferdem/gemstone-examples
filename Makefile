@@ -1,5 +1,5 @@
 PROJDIR := $(realpath $(CURDIR))
 
-SUBDIRS := magnetometer serial
+SUBDIRS := gpio magnetometer serial
 
 include $(PROJDIR)/subdirs.mk

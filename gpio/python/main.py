@@ -1,4 +1,4 @@
-#!.venv/bin/python
+#!.venv/bin/python3
 
 # Copyright (c) 2025 by T3 Foundation. All rights reserved.
 #
@@ -17,6 +17,38 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import os
+import signal
+import sys
 
-print('Es Selam, World!')
+from gpio_controller import GpioController
+
+# Global variable for signal handling
+gpio_controller = None
+
+
+def signal_handler(sig, frame):
+    global gpio_controller
+    if gpio_controller:
+        gpio_controller.cleanup()
+    sys.exit(128 + sig)
+
+
+def main():
+    global gpio_controller
+
+    gpio_controller = GpioController()
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    if not gpio_controller.initialize():
+        print("Failed to initialize GPIO controller", file=sys.stderr)
+        return 1
+
+    gpio_controller.run()
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

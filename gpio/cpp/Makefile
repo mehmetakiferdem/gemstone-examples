@@ -1,9 +1,9 @@
 TARGET = gpio
 
 PROJDIR := $(realpath $(CURDIR)/../..)
-BUILDDIR := $(PROJDIR)/build/$(TARGET)/c
+BUILDDIR := $(PROJDIR)/build/$(TARGET)/cpp
 
-C_SOURCES = main.c
+CXX_SOURCES = gpio_controller.cpp main.cpp
 
 LDFLAGS += -lgpiod
 
