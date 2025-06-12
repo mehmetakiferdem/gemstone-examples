@@ -15,4 +15,5 @@ dependencies = [
     "pyqtgraph>=0.13.7",
     "python-lsp-server>=1.12.2",
     "pyserial>=3.5",
+    "gpiod>=2.3.0",
 ]
