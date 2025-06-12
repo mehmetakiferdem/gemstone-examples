@@ -33,9 +33,13 @@ void signal_handler([[maybe_unused]] int sig)
 
 void delay_ms(int ms)
 {
-    struct timespec request = {0, ms * 1'000'000};
+    struct timespec request = {ms / 1000, (ms % 1000) * 1'000'000};
     struct timespec remaining;
-    thrd_sleep(&request, &remaining);
+
+    while (thrd_sleep(&request, &remaining) == -1 && errno == EINTR)
+    {
+        request = remaining; // Sleep again with remaining time if interrupted
+    }
 }
 
 int main(void)

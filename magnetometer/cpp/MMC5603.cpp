@@ -44,9 +44,13 @@ uint64_t MMC5603::get_timestamp_ms()
 
 void MMC5603::delay_ms(int ms)
 {
-    struct timespec request = {0, ms * 1'000'000};
+    struct timespec request = {ms / 1000, (ms % 1000) * 1'000'000};
     struct timespec remaining;
-    thrd_sleep(&request, &remaining);
+
+    while (thrd_sleep(&request, &remaining) == -1 && errno == EINTR)
+    {
+        request = remaining; // Sleep again with remaining time if interrupted
+    }
 }
 
 bool MMC5603::read_register(uint8_t reg, uint8_t& value)

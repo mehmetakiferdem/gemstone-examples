@@ -38,9 +38,13 @@ static uint64_t get_timestamp_ms(void)
 
 static void delay_ms(int ms)
 {
-    struct timespec request = {.tv_sec = 0, .tv_nsec = ms * 1.0E6};
+    struct timespec request = {ms / 1000, (ms % 1000) * 1.0E6};
     struct timespec remaining;
-    thrd_sleep(&request, &remaining);
+
+    while (thrd_sleep(&request, &remaining) == -1 && errno == EINTR)
+    {
+        request = remaining; // Sleep again with remaining time if interrupted
+    }
 }
 
 static bool read_register(mmc5603_t* dev, uint8_t reg, uint8_t* value)
