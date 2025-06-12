@@ -29,10 +29,10 @@ class GpioController:
         self.m_chip1: Optional[gpiod.Chip] = None
         self.m_chip2: Optional[gpiod.Chip] = None
 
-        self.m_line1_38: Optional[gpiod.Line] = None  # GPIO4 set to active-high output with low value
-        self.m_line1_11: Optional[gpiod.Line] = None  # RED LED output GPIO
-        self.m_line1_12: Optional[gpiod.Line] = None  # GREEN LED output GPIO
-        self.m_line2_8: Optional[gpiod.Line] = None  # GPIO17 set to input with pull-up resistor enabled
+        self.m_line_gpio4: Optional[gpiod.Line] = None  # GPIO4 set to active-high output with low value
+        self.m_line_led_red: Optional[gpiod.Line] = None  # RED LED output GPIO
+        self.m_line_led_green: Optional[gpiod.Line] = None  # GREEN LED output GPIO
+        self.m_line_gpio17: Optional[gpiod.Line] = None  # GPIO17 set to input with pull-up resistor enabled
 
         self.m_prev_input_state: int = 0
         self.m_current_input_state: int = 0
@@ -47,22 +47,21 @@ class GpioController:
             self.m_chip1 = gpiod.Chip("gpiochip1")
             self.m_chip2 = gpiod.Chip("gpiochip2")
 
-            self.m_line1_38 = self.m_chip1.get_line(38)
-            self.m_line1_11 = self.m_chip1.get_line(11)
-            self.m_line1_12 = self.m_chip1.get_line(12)
-            self.m_line2_8 = self.m_chip2.get_line(8)
+            self.m_line_gpio4 = self.m_chip1.get_line(38)
+            self.m_line_led_red = self.m_chip1.get_line(11)
+            self.m_line_led_green = self.m_chip1.get_line(12)
+            self.m_line_gpio17 = self.m_chip2.get_line(8)
 
         except Exception as e:
             print(f"Failed to open GPIO chips or get lines: {e}", file=sys.stderr)
             return False
 
-        # Configure outputs and inputs
         if not self._configure_outputs() or not self._configure_inputs():
             return False
 
         # Read initial input state
         try:
-            self.m_prev_input_state = self.m_line2_8.get_value()
+            self.m_prev_input_state = self.m_line_gpio17.get_value()
         except Exception as e:
             print(f"Failed to read initial input state: {e}", file=sys.stderr)
             return False
@@ -73,10 +72,10 @@ class GpioController:
     def _configure_outputs(self) -> bool:
         try:
             # Configure gpiochip1-38 as active-high output with value 0
-            self.m_line1_38.request(consumer="gpio_example", type=gpiod.LINE_REQ_DIR_OUT, default_val=0)
+            self.m_line_gpio4.request(consumer="gpio_example", type=gpiod.LINE_REQ_DIR_OUT, default_val=0)
 
             # Configure gpiochip1-11 as active-low output with value 0
-            self.m_line1_11.request(
+            self.m_line_led_red.request(
                 consumer="gpio_example",
                 type=gpiod.LINE_REQ_DIR_OUT,
                 flags=gpiod.LINE_REQ_FLAG_ACTIVE_LOW,
@@ -84,7 +83,7 @@ class GpioController:
             )
 
             # Configure gpiochip1-12 as active-high output with value 0
-            self.m_line1_12.request(consumer="gpio_example", type=gpiod.LINE_REQ_DIR_OUT, default_val=0)
+            self.m_line_led_green.request(consumer="gpio_example", type=gpiod.LINE_REQ_DIR_OUT, default_val=0)
 
         except Exception as e:
             print(f"Failed to configure output lines: {e}", file=sys.stderr)
@@ -95,7 +94,7 @@ class GpioController:
     def _configure_inputs(self) -> bool:
         try:
             # Configure gpiochip2-8 as pull-up input
-            self.m_line2_8.request(
+            self.m_line_gpio17.request(
                 consumer="gpio_example", type=gpiod.LINE_REQ_DIR_IN, flags=gpiod.LINE_REQ_FLAG_BIAS_PULL_UP
             )
         except Exception as e:
@@ -118,13 +117,13 @@ class GpioController:
     def _handle_input_transition(self) -> bool:
         try:
             if not self.m_toggle_state:
-                self.m_line1_11.set_value(1)
-                self.m_line1_12.set_value(0)
-                print("-> Set gpiochip1-11=HIGH, gpiochip1-12=LOW")
+                self.m_line_led_red.set_value(1)
+                self.m_line_led_green.set_value(0)
+                print("-> Set LED_RED=HIGH, LED_GREEN=LOW")
             else:
-                self.m_line1_11.set_value(0)
-                self.m_line1_12.set_value(1)
-                print("-> Set gpiochip1-11=LOW, gpiochip1-12=HIGH")
+                self.m_line_led_red.set_value(0)
+                self.m_line_led_green.set_value(1)
+                print("-> Set LED_RED=LOW, LED_GREEN=HIGH")
 
             self.m_toggle_state = not self.m_toggle_state
 
@@ -138,12 +137,11 @@ class GpioController:
         try:
             while True:
                 try:
-                    self.m_current_input_state = self.m_line2_8.get_value()
+                    self.m_current_input_state = self.m_line_gpio17.get_value()
                 except Exception as e:
                     print(f"Failed to read input state: {e}", file=sys.stderr)
                     break
 
-                # Detect falling edge (1->0 transition)
                 if self.m_prev_input_state == 1 and self.m_current_input_state == 0:
                     print("Input transition detected (1->0) - Toggling outputs")
                     if not self._handle_input_transition():
@@ -167,21 +165,21 @@ class GpioController:
 
         self._cleaned_up = True
 
-        if self.m_line1_38 and self.m_line1_38.is_requested():
-            self.m_line1_38.release()
-            self.m_line1_38 = None
+        if self.m_line_gpio4 and self.m_line_gpio4.is_requested():
+            self.m_line_gpio4.release()
+            self.m_line_gpio4 = None
 
-        if self.m_line1_11 and self.m_line1_11.is_requested():
-            self.m_line1_11.release()
-            self.m_line1_11 = None
+        if self.m_line_led_red and self.m_line_led_red.is_requested():
+            self.m_line_led_red.release()
+            self.m_line_led_red = None
 
-        if self.m_line1_12 and self.m_line1_12.is_requested():
-            self.m_line1_12.release()
-            self.m_line1_12 = None
+        if self.m_line_led_green and self.m_line_led_green.is_requested():
+            self.m_line_led_green.release()
+            self.m_line_led_green = None
 
-        if self.m_line2_8 and self.m_line2_8.is_requested():
-            self.m_line2_8.release()
-            self.m_line2_8 = None
+        if self.m_line_gpio17 and self.m_line_gpio17.is_requested():
+            self.m_line_gpio17.release()
+            self.m_line_gpio17 = None
 
         if self.m_chip1:
             self.m_chip1.close()

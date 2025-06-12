@@ -42,12 +42,12 @@ bool GpioController::initialize()
         return false;
     }
 
-    m_line1_38 = gpiod_chip_get_line(m_chip1, 38);
-    m_line1_11 = gpiod_chip_get_line(m_chip1, 11);
-    m_line1_12 = gpiod_chip_get_line(m_chip1, 12);
-    m_line2_8 = gpiod_chip_get_line(m_chip2, 8);
+    m_line_gpio4 = gpiod_chip_get_line(m_chip1, 38);
+    m_line_led_red = gpiod_chip_get_line(m_chip1, 11);
+    m_line_led_green = gpiod_chip_get_line(m_chip1, 12);
+    m_line_gpio17 = gpiod_chip_get_line(m_chip2, 8);
 
-    if (!m_line1_38 || !m_line1_11 || !m_line1_12 || !m_line2_8)
+    if (!m_line_gpio4 || !m_line_led_red || !m_line_led_green || !m_line_gpio17)
     {
         std::cerr << "Failed to get GPIO lines" << std::endl;
         return false;
@@ -58,7 +58,8 @@ bool GpioController::initialize()
         return false;
     }
 
-    m_prev_input_state = gpiod_line_get_value(m_line2_8);
+    // Read initial state of input
+    m_prev_input_state = gpiod_line_get_value(m_line_gpio17);
     if (m_prev_input_state < 0)
     {
         std::cerr << "Failed to read initial input state" << std::endl;
@@ -73,7 +74,7 @@ bool GpioController::initialize()
 bool GpioController::configure_outputs()
 {
     // Configure gpiochip1-38 as active-high output with value 0
-    int ret = gpiod_line_request_output(m_line1_38, "gpio_example", 0);
+    int ret = gpiod_line_request_output(m_line_gpio4, "gpio_example", 0);
     if (ret < 0)
     {
         std::cerr << "Failed to configure line1-38 as output" << std::endl;
@@ -81,7 +82,7 @@ bool GpioController::configure_outputs()
     }
 
     // Configure gpiochip1-11 as active-low output with value 0
-    ret = gpiod_line_request_output_flags(m_line1_11, "gpio_example", GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW, 0);
+    ret = gpiod_line_request_output_flags(m_line_led_red, "gpio_example", GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW, 0);
     if (ret < 0)
     {
         std::cerr << "Failed to configure line1-11 as active-low output" << std::endl;
@@ -89,7 +90,7 @@ bool GpioController::configure_outputs()
     }
 
     // Configure gpiochip1-12 as active-high output with value 0
-    ret = gpiod_line_request_output(m_line1_12, "gpio_example", 0);
+    ret = gpiod_line_request_output(m_line_led_green, "gpio_example", 0);
     if (ret < 0)
     {
         std::cerr << "Failed to configure line1-12 as output" << std::endl;
@@ -102,7 +103,7 @@ bool GpioController::configure_outputs()
 bool GpioController::configure_inputs()
 {
     // Configure gpiochip2-8 as pull-up input
-    int ret = gpiod_line_request_input_flags(m_line2_8, "gpio_example", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
+    int ret = gpiod_line_request_input_flags(m_line_gpio17, "gpio_example", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
     if (ret < 0)
     {
         std::cerr << "Failed to configure line2-8 as input" << std::endl;
@@ -128,35 +129,35 @@ bool GpioController::handle_input_transition()
 {
     if (!m_toggle_state)
     {
-        int ret = gpiod_line_set_value(m_line1_11, 1);
+        int ret = gpiod_line_set_value(m_line_led_red, 1);
         if (ret < 0)
         {
-            std::cerr << "Failed to set line1-11" << std::endl;
+            std::cerr << "Failed to set LED_RED" << std::endl;
             return false;
         }
-        ret = gpiod_line_set_value(m_line1_12, 0);
+        ret = gpiod_line_set_value(m_line_led_green, 0);
         if (ret < 0)
         {
-            std::cerr << "Failed to set line1-12" << std::endl;
+            std::cerr << "Failed to set LED_GREEN" << std::endl;
             return false;
         }
-        std::cout << "-> Set gpiochip1-11=HIGH, gpiochip1-12=LOW" << std::endl;
+        std::cout << "-> Set LED_RED=HIGH, LED_GREEN=LOW" << std::endl;
     }
     else
     {
-        int ret = gpiod_line_set_value(m_line1_11, 0);
+        int ret = gpiod_line_set_value(m_line_led_red, 0);
         if (ret < 0)
         {
-            std::cerr << "Failed to set line1-11" << std::endl;
+            std::cerr << "Failed to set LED_RED" << std::endl;
             return false;
         }
-        ret = gpiod_line_set_value(m_line1_12, 1);
+        ret = gpiod_line_set_value(m_line_led_green, 1);
         if (ret < 0)
         {
-            std::cerr << "Failed to set line1-12" << std::endl;
+            std::cerr << "Failed to set LED_GREEN" << std::endl;
             return false;
         }
-        std::cout << "-> Set gpiochip1-11=LOW, gpiochip1-12=HIGH" << std::endl;
+        std::cout << "-> Set LED_RED=LOW, LED_GREEN=HIGH" << std::endl;
     }
 
     m_toggle_state = !m_toggle_state;
@@ -167,7 +168,7 @@ void GpioController::run()
 {
     while (true)
     {
-        m_current_input_state = gpiod_line_get_value(m_line2_8);
+        m_current_input_state = gpiod_line_get_value(m_line_gpio17);
         if (m_current_input_state < 0)
         {
             std::cerr << "Failed to read input state" << std::endl;
@@ -194,25 +195,25 @@ void GpioController::cleanup()
 {
     std::cout << "\nCleaning up..." << std::endl;
 
-    if (m_line1_38)
+    if (m_line_gpio4)
     {
-        gpiod_line_release(m_line1_38);
-        m_line1_38 = nullptr;
+        gpiod_line_release(m_line_gpio4);
+        m_line_gpio4 = nullptr;
     }
-    if (m_line1_11)
+    if (m_line_led_red)
     {
-        gpiod_line_release(m_line1_11);
-        m_line1_11 = nullptr;
+        gpiod_line_release(m_line_led_red);
+        m_line_led_red = nullptr;
     }
-    if (m_line1_12)
+    if (m_line_led_green)
     {
-        gpiod_line_release(m_line1_12);
-        m_line1_12 = nullptr;
+        gpiod_line_release(m_line_led_green);
+        m_line_led_green = nullptr;
     }
-    if (m_line2_8)
+    if (m_line_gpio17)
     {
-        gpiod_line_release(m_line2_8);
-        m_line2_8 = nullptr;
+        gpiod_line_release(m_line_gpio17);
+        m_line_gpio17 = nullptr;
     }
 
     if (m_chip1)
