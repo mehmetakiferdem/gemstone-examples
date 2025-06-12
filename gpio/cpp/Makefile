@@ -1,7 +1,7 @@
 TARGET = gpio
 
 PROJDIR := $(realpath $(CURDIR)/../..)
-BUILDDIR := $(PROJDIR)/build/$(TARGET)/cpp
+BUILDDIR := $(PROJDIR)/build/examples/$(TARGET)/cpp
 
 CXX_SOURCES = gpio_controller.cpp main.cpp
 

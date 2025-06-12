@@ -1,6 +1,7 @@
 # Default object files (can be extended in project Makefile)
 C_OBJECTS ?= $(addprefix $(BUILDDIR)/,$(C_SOURCES:.c=.o))
 CXX_OBJECTS ?= $(addprefix $(BUILDDIR)/,$(CXX_SOURCES:.cpp=.o))
+PYTHON_OBJECTS ?= $(addprefix $(BUILDDIR)/,$(PYTHON_SOURCES))
 
 CFLAGS += \
 	--std=gnu11 \
@@ -33,9 +34,19 @@ LINK_FLAGS = $(if $(CXX_OBJECTS),$(CXXFLAGS),$(CFLAGS))
 # Ensure build directory exists
 $(shell mkdir -p $(BUILDDIR))
 
-# Default build rule for target
+# Default target for C/C++ projects
+ifneq ($(strip $(C_OBJECTS) $(CXX_OBJECTS)),)
 $(BUILDDIR)/$(TARGET): $(C_OBJECTS) $(CXX_OBJECTS)
 	$(LINKER) $(LINK_FLAGS) -o $@ $^ $(LDFLAGS)
+endif
+
+# Default target for Python projects
+ifneq ($(strip $(PYTHON_OBJECTS)),)
+ifeq ($(strip $(C_OBJECTS) $(CXX_OBJECTS)),)
+$(BUILDDIR)/$(TARGET): $(PYTHON_OBJECTS)
+	cp $(BUILDDIR)/main.py $(BUILDDIR)/$(TARGET)
+endif
+endif
 
 # Pattern rule for compiling .c files
 $(BUILDDIR)/%.o: %.c
@@ -45,7 +56,11 @@ $(BUILDDIR)/%.o: %.c
 $(BUILDDIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Pattern rule for copying .py files
+$(BUILDDIR)/%.py: %.py
+	cp $< $@
+
 clean:
-	rm -f $(BUILDDIR)/$(TARGET) $(C_OBJECTS) $(CXX_OBJECTS)
+	rm -f $(BUILDDIR)/$(TARGET) $(C_OBJECTS) $(CXX_OBJECTS) $(PYTHON_OBJECTS)
 
 .PHONY: clean
