@@ -44,11 +44,9 @@ class GpioController
 
     int m_prev_input_state {};
     int m_current_input_state {};
-    bool m_toggle_state {};
 
     bool configure_outputs();
     bool configure_inputs();
-    bool handle_input_transition();
     void print_configuration();
 };
 

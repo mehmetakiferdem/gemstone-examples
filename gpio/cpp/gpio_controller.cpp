@@ -125,45 +125,6 @@ void GpioController::print_configuration()
     std::cout << "Press Ctrl+C to exit" << std::endl << std::endl;
 }
 
-bool GpioController::handle_input_transition()
-{
-    if (!m_toggle_state)
-    {
-        int ret = gpiod_line_set_value(m_line_led_red, 1);
-        if (ret < 0)
-        {
-            std::cerr << "Failed to set LED_RED" << std::endl;
-            return false;
-        }
-        ret = gpiod_line_set_value(m_line_led_green, 0);
-        if (ret < 0)
-        {
-            std::cerr << "Failed to set LED_GREEN" << std::endl;
-            return false;
-        }
-        std::cout << "-> Set LED_RED=HIGH, LED_GREEN=LOW" << std::endl;
-    }
-    else
-    {
-        int ret = gpiod_line_set_value(m_line_led_red, 0);
-        if (ret < 0)
-        {
-            std::cerr << "Failed to set LED_RED" << std::endl;
-            return false;
-        }
-        ret = gpiod_line_set_value(m_line_led_green, 1);
-        if (ret < 0)
-        {
-            std::cerr << "Failed to set LED_GREEN" << std::endl;
-            return false;
-        }
-        std::cout << "-> Set LED_RED=LOW, LED_GREEN=HIGH" << std::endl;
-    }
-
-    m_toggle_state = !m_toggle_state;
-    return true;
-}
-
 void GpioController::run()
 {
     while (true)
@@ -177,11 +138,35 @@ void GpioController::run()
 
         if (m_prev_input_state == 1 && m_current_input_state == 0)
         {
-            std::cout << "Input transition detected (1->0) - Toggling outputs" << std::endl;
-            if (!handle_input_transition())
+            int ret = gpiod_line_set_value(m_line_led_red, 1);
+            if (ret < 0)
             {
+                std::cerr << "Failed to set LED_RED" << std::endl;
                 break;
             }
+            ret = gpiod_line_set_value(m_line_led_green, 0);
+            if (ret < 0)
+            {
+                std::cerr << "Failed to set LED_GREEN" << std::endl;
+                break;
+            }
+            std::cout << "-> Set LED_RED=HIGH, LED_GREEN=LOW" << std::endl;
+        }
+        if (m_prev_input_state == 0 && m_current_input_state == 1)
+        {
+            int ret = gpiod_line_set_value(m_line_led_red, 0);
+            if (ret < 0)
+            {
+                std::cerr << "Failed to set LED_RED" << std::endl;
+                break;
+            }
+            ret = gpiod_line_set_value(m_line_led_green, 1);
+            if (ret < 0)
+            {
+                std::cerr << "Failed to set LED_GREEN" << std::endl;
+                break;
+            }
+            std::cout << "-> Set LED_RED=LOW, LED_GREEN=HIGH" << std::endl;
         }
 
         m_prev_input_state = m_current_input_state;

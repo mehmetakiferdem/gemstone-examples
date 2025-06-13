@@ -60,7 +60,6 @@ int main()
     int ret;
     int prev_input_state = 0;
     int current_input_state = 0;
-    bool toggle_state = false;
 
     atexit(cleanup);
     signal(SIGINT, signal_handler);
@@ -150,42 +149,35 @@ int main()
 
         if (prev_input_state == 1 && current_input_state == 0)
         {
-            printf("Input transition detected (1->0) - Toggling outputs\n");
-
-            if (!toggle_state)
+            ret = gpiod_line_set_value(line_led_red, 1);
+            if (ret < 0)
             {
-                ret = gpiod_line_set_value(line_led_red, 1);
-                if (ret < 0)
-                {
-                    fprintf(stderr, "Failed to set LED_RED\n");
-                    break;
-                }
-                ret = gpiod_line_set_value(line_led_green, 0);
-                if (ret < 0)
-                {
-                    fprintf(stderr, "Failed to set LED_GREEN\n");
-                    break;
-                }
-                printf("-> Set LED_RED=HIGH, LED_GREEN=LOW\n");
+                fprintf(stderr, "Failed to set LED_RED\n");
+                break;
             }
-            else
+            ret = gpiod_line_set_value(line_led_green, 0);
+            if (ret < 0)
             {
-                ret = gpiod_line_set_value(line_led_red, 0);
-                if (ret < 0)
-                {
-                    fprintf(stderr, "Failed to set LED_RED\n");
-                    break;
-                }
-                ret = gpiod_line_set_value(line_led_green, 1);
-                if (ret < 0)
-                {
-                    fprintf(stderr, "Failed to set LED_GREEN\n");
-                    break;
-                }
-                printf("-> Set LED_RED=LOW, LED_GREEN=HIGH\n");
+                fprintf(stderr, "Failed to set LED_GREEN\n");
+                break;
             }
-
-            toggle_state = !toggle_state;
+            printf("-> Set LED_RED=HIGH, LED_GREEN=LOW\n");
+        }
+        else if (prev_input_state == 0 && current_input_state == 1)
+        {
+            ret = gpiod_line_set_value(line_led_red, 0);
+            if (ret < 0)
+            {
+                fprintf(stderr, "Failed to set LED_RED\n");
+                break;
+            }
+            ret = gpiod_line_set_value(line_led_green, 1);
+            if (ret < 0)
+            {
+                fprintf(stderr, "Failed to set LED_GREEN\n");
+                break;
+            }
+            printf("-> Set LED_RED=LOW, LED_GREEN=HIGH\n");
         }
 
         prev_input_state = current_input_state;

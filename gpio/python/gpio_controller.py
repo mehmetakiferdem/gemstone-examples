@@ -38,7 +38,6 @@ class GpioController:
         self.m_prev_input_state: int = 0
         self.m_current_input_state: int = 0
 
-        self.m_toggle_state: bool = False
         self._cleaned_up: bool = False
 
     def __del__(self):
@@ -97,31 +96,6 @@ class GpioController:
         print("Press Ctrl+C to exit")
         print()
 
-    def _handle_input_transition(self) -> bool:
-        try:
-            if not self.m_toggle_state:
-                values = {
-                    self.m_line_led_red: gpiod.line.Value.ACTIVE,
-                    self.m_line_led_green: gpiod.line.Value.INACTIVE,
-                }
-                self.m_output_request.set_values(values)
-                print("-> Set LED_RED=HIGH, LED_GREEN=LOW")
-            else:
-                values = {
-                    self.m_line_led_red: gpiod.line.Value.INACTIVE,
-                    self.m_line_led_green: gpiod.line.Value.ACTIVE,
-                }
-                self.m_output_request.set_values(values)
-                print("-> Set LED_RED=LOW, LED_GREEN=HIGH")
-
-            self.m_toggle_state = not self.m_toggle_state
-
-        except Exception as e:
-            print(f"Failed to set output values: {e}", file=sys.stderr)
-            return False
-
-        return True
-
     def run(self) -> None:
         try:
             while True:
@@ -132,9 +106,19 @@ class GpioController:
                     break
 
                 if self.m_prev_input_state == 1 and self.m_current_input_state == 0:
-                    print("Input transition detected (1->0) - Toggling outputs")
-                    if not self._handle_input_transition():
-                        break
+                    values = {
+                        self.m_line_led_red: gpiod.line.Value.ACTIVE,
+                        self.m_line_led_green: gpiod.line.Value.INACTIVE,
+                    }
+                    self.m_output_request.set_values(values)
+                    print("-> Set LED_RED=HIGH, LED_GREEN=LOW")
+                elif self.m_prev_input_state == 0 and self.m_current_input_state == 1:
+                    values = {
+                        self.m_line_led_red: gpiod.line.Value.INACTIVE,
+                        self.m_line_led_green: gpiod.line.Value.ACTIVE,
+                    }
+                    self.m_output_request.set_values(values)
+                    print("-> Set LED_RED=LOW, LED_GREEN=HIGH")
 
                 self.m_prev_input_state = self.m_current_input_state
 
