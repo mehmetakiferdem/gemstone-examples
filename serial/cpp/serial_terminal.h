@@ -48,7 +48,6 @@ class Terminal
     Terminal();
     ~Terminal();
 
-    // Non-copyable
     Terminal(const Terminal&) = delete;
     Terminal& operator=(const Terminal&) = delete;
 
@@ -68,7 +67,6 @@ class SerialTerminal
     SerialTerminal();
     ~SerialTerminal();
 
-    // Non-copyable
     SerialTerminal(const SerialTerminal&) = delete;
     SerialTerminal& operator=(const SerialTerminal&) = delete;
 
@@ -80,12 +78,11 @@ class SerialTerminal
     static void signal_handler(int sig);
 
   private:
-    void cleanup();
     static SerialTerminal* s_instance;
 
     SerialPort m_serial_port {};
     Terminal m_terminal {};
-    bool m_running {};
+    bool m_is_running {};
 };
 
 #endif // SERIAL_TERMINAL_H

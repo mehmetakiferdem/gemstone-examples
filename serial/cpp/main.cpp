@@ -46,22 +46,22 @@ int main(int argc, char* argv[])
             if (baud_rate <= 0)
             {
                 std::cerr << "Invalid baud rate: " << optarg << std::endl;
-                return 1;
+                return EXIT_FAILURE;
             }
             break;
         case 'h':
             SerialTerminal::print_usage(argv[0]);
-            return 0;
+            return EXIT_SUCCESS;
         default:
             SerialTerminal::print_usage(argv[0]);
-            return 1;
+            return EXIT_FAILURE;
         }
     }
 
     if (device.empty() || baud_rate == -1)
     {
         SerialTerminal::print_usage(argv[0]);
-        return 1;
+        return EXIT_FAILURE;
     }
 
     SerialTerminal terminal;
@@ -71,10 +71,10 @@ int main(int argc, char* argv[])
 
     if (!terminal.initialize(device, baud_rate))
     {
-        return 1;
+        return EXIT_FAILURE;
     }
 
     terminal.run();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

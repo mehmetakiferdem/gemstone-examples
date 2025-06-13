@@ -24,6 +24,7 @@ import gpiod
 
 class GpioController:
     def __init__(self):
+        self.m_is_running: bool = False
         self.m_chip1: Optional[gpiod.Chip] = None
         self.m_chip2: Optional[gpiod.Chip] = None
 
@@ -98,7 +99,8 @@ class GpioController:
 
     def run(self) -> None:
         try:
-            while True:
+            self.m_is_running = True
+            while self.m_is_running:
                 try:
                     self.m_current_input_state = self.m_input_request.get_value(self.m_line_gpio17).value
                 except Exception as e:
@@ -130,11 +132,13 @@ class GpioController:
         except Exception as e:
             print(f"Error in main loop: {e}", file=sys.stderr)
 
+    def stop(self) -> None:
+        self.m_is_running = False
+
     def cleanup(self) -> None:
         if self._cleaned_up:
             return
 
-        print("\nCleaning up...")
         self._cleaned_up = True
 
         if self.m_output_request:

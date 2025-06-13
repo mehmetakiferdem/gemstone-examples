@@ -23,12 +23,13 @@
 #include <threads.h>
 #include <unistd.h>
 
-static volatile bool running = true;
+// Global variables
+static volatile bool g_is_running = true;
 
 void signal_handler([[maybe_unused]] int sig)
 {
-    running = false;
     std::cout << "\nShutting down..." << std::endl;
+    g_is_running = false;
 }
 
 void delay_ms(int ms)
@@ -49,7 +50,6 @@ int main(void)
     SensorInfo sensor_info;
     float temperature;
 
-    // Set up signal handler for graceful shutdown
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
 
@@ -91,7 +91,7 @@ int main(void)
 
     // Example 1: One-shot mode readings
     std::cout << "=== ONE-SHOT MODE READINGS ===" << std::endl;
-    for (int i = 0; i < 5 && running; i++)
+    for (int i = 0; i < 5 && g_is_running; i++)
     {
         if (mag.read_mag(mag_data))
         {
@@ -106,7 +106,7 @@ int main(void)
         delay_ms(1000);
     }
 
-    if (!running)
+    if (!g_is_running)
     {
         return EXIT_SUCCESS;
     }
@@ -124,7 +124,7 @@ int main(void)
     int reading_count = 0;
     uint64_t start_time = 0;
 
-    while (running)
+    while (g_is_running)
     {
         if (mag.read_mag(mag_data))
         {

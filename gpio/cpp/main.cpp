@@ -19,35 +19,28 @@
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
-#include <memory>
 
-// Global pointer for signal handling
-std::unique_ptr<GpioController> g_gpio_controller;
+// Global variables
+GpioController g_gpio_controller {};
 
-void signal_handler(int sig)
+void signal_handler([[maybe_unused]] int sig)
 {
-    if (g_gpio_controller)
-    {
-        g_gpio_controller->cleanup();
-    }
-    std::_Exit(128 + sig);
+    std::cout << "\nShutting down..." << std::endl;
+    g_gpio_controller.stop();
 }
 
 int main()
 {
-    g_gpio_controller = std::make_unique<GpioController>();
-
     std::signal(SIGINT, signal_handler);
     std::signal(SIGTERM, signal_handler);
 
-    if (!g_gpio_controller->initialize())
+    if (!g_gpio_controller.initialize())
     {
         std::cerr << "Failed to initialize GPIO controller" << std::endl;
         return EXIT_FAILURE;
     }
 
-    // Run the main loop
-    g_gpio_controller->run();
+    g_gpio_controller.run();
 
     return EXIT_SUCCESS;
 }

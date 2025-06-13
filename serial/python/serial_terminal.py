@@ -114,10 +114,12 @@ class SerialTerminal:
         SerialTerminal._s_instance = self
         self.m_serial_port = SerialPort()
         self.m_terminal = Terminal()
-        self.m_running = False
+        self.m_is_running = False
 
     def __del__(self):
-        self.cleanup()
+        self.m_serial_port.close()
+        self.m_terminal.restore()
+        print("\nShutting down...")
         SerialTerminal._s_instance = None
 
     def initialize(self, device: str, baud_rate: int) -> bool:
@@ -140,11 +142,11 @@ class SerialTerminal:
         if not self.m_serial_port.is_open():
             return
 
-        self.m_running = True
+        self.m_is_running = True
         serial_fd = self.m_serial_port.get_fd()
         stdin_fd = sys.stdin.fileno()
 
-        while self.m_running:
+        while self.m_is_running:
             try:
                 # Wait for input from either keyboard or serial port
                 ready, _, _ = select.select([stdin_fd, serial_fd], [], [])
@@ -156,7 +158,7 @@ class SerialTerminal:
                         if data:
                             # Check for Ctrl+C (ASCII 3)
                             if b"\x03" in data:
-                                self.m_running = False
+                                self.m_is_running = False
                                 return
 
                             # Send to serial port
@@ -170,30 +172,21 @@ class SerialTerminal:
                     try:
                         data = self.m_serial_port.read(1)
                         if data:
-                            if data == b"\r":
-                                sys.stdout.buffer.write(b"\n")
-                            else:
-                                sys.stdout.buffer.write(data)
+                            sys.stdout.buffer.write(data)
                             sys.stdout.buffer.flush()
                     except (OSError, IOError):
                         break
 
             except KeyboardInterrupt:
-                self.m_running = False
+                self.m_is_running = False
                 break
             except select.error:
                 break
 
     def stop(self) -> None:
-        self.m_running = False
-
-    def cleanup(self) -> None:
-        self.m_serial_port.close()
-        self.m_terminal.restore()
-        print("\nTerminating...")
+        self.m_is_running = False
 
     @staticmethod
     def signal_handler(sig, frame) -> None:
         if SerialTerminal._s_instance:
             SerialTerminal._s_instance.stop()
-        sys.exit(0)

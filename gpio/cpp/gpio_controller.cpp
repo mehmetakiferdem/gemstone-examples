@@ -24,7 +24,37 @@ GpioController::GpioController() {}
 
 GpioController::~GpioController()
 {
-    cleanup();
+    if (m_line_gpio4)
+    {
+        gpiod_line_release(m_line_gpio4);
+        m_line_gpio4 = nullptr;
+    }
+    if (m_line_led_red)
+    {
+        gpiod_line_release(m_line_led_red);
+        m_line_led_red = nullptr;
+    }
+    if (m_line_led_green)
+    {
+        gpiod_line_release(m_line_led_green);
+        m_line_led_green = nullptr;
+    }
+    if (m_line_gpio17)
+    {
+        gpiod_line_release(m_line_gpio17);
+        m_line_gpio17 = nullptr;
+    }
+
+    if (m_chip1)
+    {
+        gpiod_chip_close(m_chip1);
+        m_chip1 = nullptr;
+    }
+    if (m_chip2)
+    {
+        gpiod_chip_close(m_chip2);
+        m_chip2 = nullptr;
+    }
 }
 
 void GpioController::delay_ms(int ms)
@@ -139,7 +169,8 @@ void GpioController::print_configuration()
 
 void GpioController::run()
 {
-    while (true)
+    m_is_running = true;
+    while (m_is_running)
     {
         m_current_input_state = gpiod_line_get_value(m_line_gpio17);
         if (m_current_input_state < 0)
@@ -188,39 +219,7 @@ void GpioController::run()
     }
 }
 
-void GpioController::cleanup()
+void GpioController::stop()
 {
-    std::cout << "\nCleaning up..." << std::endl;
-
-    if (m_line_gpio4)
-    {
-        gpiod_line_release(m_line_gpio4);
-        m_line_gpio4 = nullptr;
-    }
-    if (m_line_led_red)
-    {
-        gpiod_line_release(m_line_led_red);
-        m_line_led_red = nullptr;
-    }
-    if (m_line_led_green)
-    {
-        gpiod_line_release(m_line_led_green);
-        m_line_led_green = nullptr;
-    }
-    if (m_line_gpio17)
-    {
-        gpiod_line_release(m_line_gpio17);
-        m_line_gpio17 = nullptr;
-    }
-
-    if (m_chip1)
-    {
-        gpiod_chip_close(m_chip1);
-        m_chip1 = nullptr;
-    }
-    if (m_chip2)
-    {
-        gpiod_chip_close(m_chip2);
-        m_chip2 = nullptr;
-    }
+    m_is_running = false;
 }

@@ -188,7 +188,9 @@ SerialTerminal::SerialTerminal()
 
 SerialTerminal::~SerialTerminal()
 {
-    cleanup();
+    m_serial_port.close();
+    m_terminal.restore();
+    std::cout << "\nShutting down..." << std::endl;
     s_instance = nullptr;
 }
 
@@ -225,10 +227,10 @@ void SerialTerminal::run()
         return;
     }
 
-    m_running = true;
+    m_is_running = true;
     max_fd = (m_serial_port.get_fd() > STDIN_FILENO) ? m_serial_port.get_fd() : STDIN_FILENO;
 
-    while (m_running)
+    while (m_is_running)
     {
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
@@ -255,7 +257,7 @@ void SerialTerminal::run()
                 {
                     if (buffer[i] == 3)
                     {
-                        m_running = false;
+                        m_is_running = false;
                         return;
                     }
                 }
@@ -289,14 +291,7 @@ void SerialTerminal::run()
 
 void SerialTerminal::stop()
 {
-    m_running = false;
-}
-
-void SerialTerminal::cleanup()
-{
-    m_serial_port.close();
-    m_terminal.restore();
-    std::cout << std::endl << "Terminating..." << std::endl;
+    m_is_running = false;
 }
 
 void SerialTerminal::signal_handler([[maybe_unused]] int sig)
@@ -305,7 +300,6 @@ void SerialTerminal::signal_handler([[maybe_unused]] int sig)
     {
         s_instance->stop();
     }
-    exit(0);
 }
 
 void SerialTerminal::print_usage(const char* program_name)

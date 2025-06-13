@@ -26,10 +26,10 @@
 #include <termios.h>
 #include <unistd.h>
 
-// Global variables for cleanup
-int serial_fd = -1;
-struct termios original_termios;
-int is_terminal_configured = 0;
+// Global variables
+int g_serial_fd = -1;
+struct termios g_original_termios;
+int g_is_terminal_configured = 0;
 
 void signal_handler(__attribute__((unused)) int sig)
 {
@@ -38,15 +38,15 @@ void signal_handler(__attribute__((unused)) int sig)
 
 void cleanup()
 {
-    if (serial_fd >= 0)
+    if (g_serial_fd >= 0)
     {
-        close(serial_fd);
+        close(g_serial_fd);
     }
-    if (is_terminal_configured)
+    if (g_is_terminal_configured)
     {
-        tcsetattr(STDIN_FILENO, TCSANOW, &original_termios);
+        tcsetattr(STDIN_FILENO, TCSANOW, &g_original_termios);
     }
-    printf("\nTerminating...\n");
+    printf("\nShutting down...\n");
 }
 
 speed_t get_baud_rate(int baud)
@@ -87,17 +87,17 @@ int configure_serial(const char* device, int baud_rate)
         return -1;
     }
 
-    serial_fd = open(device, O_RDWR | O_NOCTTY | O_SYNC);
-    if (serial_fd < 0)
+    g_serial_fd = open(device, O_RDWR | O_NOCTTY | O_SYNC);
+    if (g_serial_fd < 0)
     {
         perror("Error opening serial port");
         return -1;
     }
 
-    if (tcgetattr(serial_fd, &tty) != 0)
+    if (tcgetattr(g_serial_fd, &tty) != 0)
     {
         perror("Error getting serial port attributes");
-        close(serial_fd);
+        close(g_serial_fd);
         return -1;
     }
 
@@ -120,10 +120,10 @@ int configure_serial(const char* device, int baud_rate)
     tty.c_cflag &= ~CSTOPB;                 // clear stop field
     tty.c_cflag &= ~CRTSCTS;                // no hardware flow control
 
-    if (tcsetattr(serial_fd, TCSANOW, &tty) != 0)
+    if (tcsetattr(g_serial_fd, TCSANOW, &tty) != 0)
     {
         perror("Error setting serial port attributes");
-        close(serial_fd);
+        close(g_serial_fd);
         return -1;
     }
 
@@ -134,14 +134,14 @@ int configure_terminal()
 {
     struct termios raw;
 
-    if (tcgetattr(STDIN_FILENO, &original_termios) == -1)
+    if (tcgetattr(STDIN_FILENO, &g_original_termios) == -1)
     {
         perror("Error getting terminal attributes");
         return -1;
     }
-    is_terminal_configured = 1;
+    g_is_terminal_configured = 1;
 
-    raw = original_termios;
+    raw = g_original_termios;
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
     raw.c_cflag |= CS8;
@@ -176,13 +176,13 @@ void run_terminal()
     char buffer[256];
     ssize_t bytes_read;
 
-    max_fd = (serial_fd > STDIN_FILENO) ? serial_fd : STDIN_FILENO;
+    max_fd = (g_serial_fd > STDIN_FILENO) ? g_serial_fd : STDIN_FILENO;
 
     while (1)
     {
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
-        FD_SET(serial_fd, &read_fds);
+        FD_SET(g_serial_fd, &read_fds);
 
         // Wait for input from either keyboard or serial port
         if (select(max_fd + 1, &read_fds, NULL, NULL, NULL) < 0)
@@ -210,7 +210,7 @@ void run_terminal()
                 }
 
                 // Send to serial port
-                if (write(serial_fd, buffer, bytes_read) != bytes_read)
+                if (write(g_serial_fd, buffer, bytes_read) != bytes_read)
                 {
                     break;
                 }
@@ -218,9 +218,9 @@ void run_terminal()
         }
 
         // Handle serial port input
-        if (FD_ISSET(serial_fd, &read_fds))
+        if (FD_ISSET(g_serial_fd, &read_fds))
         {
-            bytes_read = read(serial_fd, buffer, sizeof(buffer) - 1);
+            bytes_read = read(g_serial_fd, buffer, sizeof(buffer) - 1);
             if (bytes_read > 0)
             {
                 if (write(STDOUT_FILENO, buffer, bytes_read) != bytes_read)
@@ -247,6 +247,10 @@ int main(int argc, char* argv[])
                                            {"help", no_argument, 0, 'h'},
                                            {0, 0, 0, 0}};
 
+    atexit(cleanup);
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
+
     while ((opt = getopt_long(argc, argv, "d:b:h", long_options, NULL)) != -1)
     {
         switch (opt)
@@ -259,35 +263,31 @@ int main(int argc, char* argv[])
             if (baud_rate <= 0)
             {
                 printf("Invalid baud rate: %s\n", optarg);
-                return 1;
+                return EXIT_FAILURE;
             }
             else if (get_baud_rate(baud_rate) == B0)
             {
-                return 1;
+                return EXIT_FAILURE;
             }
             break;
         case 'h':
             print_usage(argv[0]);
-            return 0;
+            return EXIT_SUCCESS;
         default:
             print_usage(argv[0]);
-            return 1;
+            return EXIT_FAILURE;
         }
     }
 
     if (device == NULL || baud_rate == -1)
     {
         print_usage(argv[0]);
-        return 1;
+        return EXIT_FAILURE;
     }
-
-    signal(SIGINT, signal_handler);
-    signal(SIGTERM, signal_handler);
-    atexit(cleanup);
 
     if (configure_serial(device, baud_rate) < 0)
     {
-        return 1;
+        return EXIT_FAILURE;
     }
 
     printf("==============================================\n");
@@ -298,10 +298,10 @@ int main(int argc, char* argv[])
 
     if (configure_terminal() < 0)
     {
-        return 1;
+        return EXIT_FAILURE;
     }
 
     run_terminal();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

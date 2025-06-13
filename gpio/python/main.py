@@ -22,30 +22,28 @@ import sys
 
 from gpio_controller import GpioController
 
-# Global variable for signal handling
-gpio_controller = None
+# Global variables
+g_gpio_controller = GpioController()
 
 
 def signal_handler(sig, frame):
-    global gpio_controller
-    if gpio_controller:
-        gpio_controller.cleanup()
-    sys.exit(128 + sig)
+    global g_gpio_controller
+
+    print("\nShutting down...")
+    g_gpio_controller.stop()
 
 
 def main():
-    global gpio_controller
-
-    gpio_controller = GpioController()
+    global g_gpio_controller
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    if not gpio_controller.initialize():
+    if not g_gpio_controller.initialize():
         print("Failed to initialize GPIO controller", file=sys.stderr)
         return 1
 
-    gpio_controller.run()
+    g_gpio_controller.run()
 
     return 0
 

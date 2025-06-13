@@ -24,20 +24,20 @@ import time
 
 from MMC5603 import MMC56X3_DEFAULT_ADDRESS, MMC5603
 
-# Global flag for graceful shutdown
-running = True
+# Global variables
+g_is_running = True
 
 
 def signal_handler(signum, frame):
-    global running
-    running = False
+    global g_is_running
+
     print("\nShutting down...")
+    g_is_running = False
 
 
 def main():
-    global running
+    global g_is_running
 
-    # Set up signal handlers for graceful shutdown
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
@@ -77,7 +77,7 @@ def main():
         # Example 1: One-shot mode readings
         print("=== ONE-SHOT MODE READINGS ===")
         for i in range(5):
-            if not running:
+            if not g_is_running:
                 break
 
             success, mag_data = mag.read_mag()
@@ -92,7 +92,7 @@ def main():
 
             time.sleep(1.0)
 
-        if not running:
+        if not g_is_running:
             return 0
 
         # Example 2: Continuous mode readings
@@ -106,7 +106,7 @@ def main():
         reading_count = 0
         start_time = None
 
-        while running:
+        while g_is_running:
             success, mag_data = mag.read_mag()
             if success:
                 if start_time is None:

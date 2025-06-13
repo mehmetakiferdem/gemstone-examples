@@ -31,7 +31,7 @@ class GpioController
 
     bool initialize();
     void run();
-    void cleanup();
+    void stop();
 
   private:
     struct gpiod_chip* m_chip1 {};
@@ -42,6 +42,7 @@ class GpioController
     struct gpiod_line* m_line_led_green {}; // LED_GREEN output GPIO
     struct gpiod_line* m_line_gpio17 {};    // GPIO17 set to input with pull-up resistor enabled (normally high)
 
+    bool m_is_running {};
     int m_prev_input_state {};
     int m_current_input_state {};
 
