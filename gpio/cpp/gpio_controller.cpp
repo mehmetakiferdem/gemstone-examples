@@ -17,6 +17,7 @@
 
 #include "gpio_controller.h"
 #include <iostream>
+#include <threads.h>
 #include <unistd.h>
 
 GpioController::GpioController() {}
@@ -24,6 +25,17 @@ GpioController::GpioController() {}
 GpioController::~GpioController()
 {
     cleanup();
+}
+
+void GpioController::delay_ms(int ms)
+{
+    struct timespec request = {ms / 1000, (ms % 1000) * 1'000'000};
+    struct timespec remaining;
+
+    while (thrd_sleep(&request, &remaining) == -1 && errno == EINTR)
+    {
+        request = remaining; // Sleep again with remaining time if interrupted
+    }
 }
 
 bool GpioController::initialize()
@@ -172,7 +184,7 @@ void GpioController::run()
         m_prev_input_state = m_current_input_state;
 
         // Small delay to avoid excessive CPU usage
-        usleep(10000);
+        delay_ms(10);
     }
 }
 

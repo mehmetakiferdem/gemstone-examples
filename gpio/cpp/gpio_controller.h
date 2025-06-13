@@ -48,6 +48,7 @@ class GpioController
     bool configure_outputs();
     bool configure_inputs();
     void print_configuration();
+    static void delay_ms(int ms);
 };
 
 #endif // GPIO_CONTROLLER_H

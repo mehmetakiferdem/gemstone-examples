@@ -15,11 +15,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+#include <errno.h>
 #include <gpiod.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <threads.h>
 #include <unistd.h>
 
 // Global variables for cleanup
@@ -53,6 +55,17 @@ void signal_handler(__attribute__((unused)) int sig)
 {
     cleanup();
     _exit(128 + sig);
+}
+
+void delay_ms(int ms)
+{
+    struct timespec request = {ms / 1000, (ms % 1000) * 1.0E6};
+    struct timespec remaining;
+
+    while (thrd_sleep(&request, &remaining) == -1 && errno == EINTR)
+    {
+        request = remaining; // Sleep again with remaining time if interrupted
+    }
 }
 
 int main()
@@ -183,7 +196,7 @@ int main()
         prev_input_state = current_input_state;
 
         // Small delay to avoid excessive CPU usage
-        usleep(10000);
+        delay_ms(10);
     }
 
     return EXIT_SUCCESS;
