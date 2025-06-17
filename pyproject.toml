@@ -16,4 +16,6 @@ dependencies = [
     "python-lsp-server>=1.12.2",
     "pyserial>=3.5",
     "gpiod>=2.3.0",
+    "numpy>=2.2.6",
+    "opencv-python>=4.11.0.86",
 ]
