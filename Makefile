@@ -1,5 +1,5 @@
 PROJDIR := $(realpath $(CURDIR))
 
-SUBDIRS := camera gpio magnetometer pwm serial
+SUBDIRS := camera gpio magnetometer mcu pwm serial
 
 include $(PROJDIR)/subdirs.mk

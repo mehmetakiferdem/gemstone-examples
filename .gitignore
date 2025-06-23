@@ -11,3 +11,8 @@ __marimo__
 dist/
 wheels/
 *.egg-info
+
+**/j722s-evm/**/obj
+**/j722s-evm/**/generated
+**/j722s-evm/**/*.release.*
+**/j722s-evm/**/*.debug.*
