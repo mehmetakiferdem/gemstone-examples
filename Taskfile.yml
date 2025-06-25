@@ -23,6 +23,7 @@ vars:
     }
 
 env:
+  CROSS_COMPILE: 'true'
   PROCESSOR_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
   MCU_PLUS_SDK_PATH: "${PROCESSOR_SDK_PATH}/mcu_plus_sdk_j722s_10_01_00_22"
   TOOLS_PATH: '{{ .TI_INSTALL_DIR }}'
@@ -118,7 +119,9 @@ tasks:
     cmds:
       - task: fetch-ti
       - |
-        pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        if [ "$CROSS_COMPILE" == "true" ]; then
+          pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        fi
         make -C '{{ .PROJECT }}' run-ti
 
 
@@ -126,14 +129,18 @@ tasks:
     cmds:
       - task: fetch
       - |
-        pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        if [ "$CROSS_COMPILE" == "true" ]; then
+          pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        fi
         make -C '{{ .PROJECT }}'
 
   clean:
     cmds:
       - task: fetch
       - |
-        pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        if [ "$CROSS_COMPILE" == "true" ]; then
+          pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+        fi
         make -C '{{ .PROJECT }}' clean
 
   destroy:
