@@ -27,7 +27,7 @@ clean: check-tools
 		rm -rf "$(BUILDDIR)/$(ti_project_name)";)
 
 run-ti: check-tools
-	$(MAKE) -C "$(TI_TARGET)" -f makefile $(TI_COMMAND);
+	$(MAKE) -C "$(RUN_TI_TARGET)" -f makefile $(RUN_TI_COMMAND);
 
 check-tools:
 	@$(foreach tool,$(TI_REQUIRED_TOOLS), \

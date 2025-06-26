@@ -3,18 +3,16 @@
 
 version: '3'
 
+dotenv: ['.env']
+
 vars:
-  DISTRO_BASE: '{{ .DISTRO_BASE | default "ubuntu" }}'
-  DISTRO_SUITE: '{{ .DISTRO_SUITE | default "jammy" }}'
-  DISTRO_TYPE: '{{ .DISTRO_TYPE | default "minimal" }}'
   BUILD_DIR: '{{ .ROOT_DIR }}/build'
   DOWNLOAD_DIR: '{{ .BUILD_DIR }}/downloads'
-  TOOLCHAINS_DIR: '{{ .BUILD_DIR }}/{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}'
+  TOOLCHAINS_DIR: '{{ .BUILD_DIR }}/${DISTRO_BASE}-${DISTRO_SUITE}'
   TI_INSTALL_DIR: '{{ .BUILD_DIR }}/ti'
-  PROJECT: '{{ .PROJECT | default "." }}'
   URLS:
     map: {
-      toolchains: 'https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.gz',
+      toolchains: 'https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz',
       ti_j722s_rtos_sdk: 'https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/ti-processor-sdk-rtos-j722s-evm-10_01_00_04.tar.gz',
       ti_j722s_mcusw_sdk: 'https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/MCUSW_J722S_10.01.00.03.zip',
       ti_sysconfig: 'https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-nsUM6f7Vvb/1.20.0.3587/sysconfig-1.20.0_3587-setup.run',
@@ -23,18 +21,12 @@ vars:
     }
 
 env:
-  CROSS_COMPILE: 'true'
   PROCESSOR_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
   MCU_PLUS_SDK_PATH: "${PROCESSOR_SDK_PATH}/mcu_plus_sdk_j722s_10_01_00_22"
   TOOLS_PATH: '{{ .TI_INSTALL_DIR }}'
   SYSCFG_PATH: '{{ .TI_INSTALL_DIR }}/sysconfig_1.20.0'
   CGT_TI_C7000_PATH: '{{ .TI_INSTALL_DIR }}/ti-cgt-c7000_4.1.0.LTS'
   CGT_TI_ARM_CLANG_PATH: '{{ .TI_INSTALL_DIR }}/ti-cgt-armllvm_3.2.2.LTS'
-  PROFILE: 'release'
-  TI_TARGET: 'j722s-evm/mcu-r5fss0-0_freertos/ti-arm-clang'
-  TI_COMMAND: 'syscfg-gui'
-
-dotenv: ['.env']
 
 tasks:
 
@@ -44,14 +36,17 @@ tasks:
       - task --list-all --summary
       - echo
       - echo "Environment:"
+      - echo "  MACHINE        = ${MACHINE}"
+      - echo "  DISTRO_BASE    = ${DISTRO_BASE}"
+      - echo "  DISTRO_SUITE   = ${DISTRO_SUITE}"
+      - echo "  DISTRO_TYPE    = ${DISTRO_TYPE}"
+      - echo "  PROJECT        = ${PROJECT}"
+      - echo "  CROSS_COMPILE  = ${CROSS_COMPILE}"
       - echo
-      - echo "  MACHINE         = '{{ .MACHINE }}'"
-      - echo "  BUILD_DIR        = '{{ .BUILD_DIR }}'"
-      - echo "  DOWNLOAD_DIR    = '{{ .DOWNLOAD_DIR }}'"
-      - echo "  TOOLCHAINS_DIR   = '{{ .TOOLCHAINS_DIR }}'"
-      - echo "  TI_INSTALL_DIR  = '{{ .TI_INSTALL_DIR }}'"
-      - echo "  PROCESSOR_SDK_PATH = '{{ .PROCESSOR_SDK_PATH }}'"
-      - echo "  MCU_PLUS_SDK_PATH  = '{{ .MCU_PLUS_SDK_PATH }}'"
+      - echo "TI Environment:"
+      - echo "  PROFILE        = ${PROFILE}"
+      - echo "  RUN_TI_TARGET  = ${RUN_TI_TARGET}"
+      - echo "  RUN_TI_COMMAND = ${RUN_TI_COMMAND}"
       - echo
 
   wget:
@@ -70,8 +65,8 @@ tasks:
       - task: wget
         vars:
           URL: '{{ get .URLS "toolchains" }}'
-          PATH: '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.gz'
-      - tar xf '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-{{ .DISTRO_BASE }}-{{ .DISTRO_SUITE }}.tar.gz' --directory "{{ .TOOLCHAINS_DIR }}"
+          PATH: '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz'
+      - tar xf '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz' --directory "{{ .TOOLCHAINS_DIR }}"
     status:
       - test -f '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-ubuntu-jammy.tar.gz'
 
@@ -95,7 +90,7 @@ tasks:
           URL: '{{ get .URLS "ti_sysconfig" }}'
           PATH: '{{ .DOWNLOAD_DIR }}/sysconfig.run'
       - chmod +x '{{ .DOWNLOAD_DIR }}/sysconfig.run'
-      - '{{ .DOWNLOAD_DIR }}/sysconfig.run --mode unattended --prefix ${SYSCFG_PATH}'
+      - '{{ .DOWNLOAD_DIR }}/sysconfig.run --mode unattended --prefix {{ .SYSCFG_PATH }}'
       - task: wget
         vars:
           URL: '{{ get .URLS "ti_cgt_c7000" }}'
@@ -119,29 +114,28 @@ tasks:
     cmds:
       - task: fetch-ti
       - |
-        if [ "$CROSS_COMPILE" == "true" ]; then
+        if [ "${CROSS_COMPILE}" == "true" ]; then
           pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
         fi
-        make -C '{{ .PROJECT }}' run-ti
-
+        make -C mcu run-ti
 
   build:
     cmds:
       - task: fetch
       - |
-        if [ "$CROSS_COMPILE" == "true" ]; then
+        if [ "${CROSS_COMPILE}" == "true" ]; then
           pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
         fi
-        make -C '{{ .PROJECT }}'
+        make -C "${PROJECT}"
 
   clean:
     cmds:
       - task: fetch
       - |
-        if [ "$CROSS_COMPILE" == "true" ]; then
+        if [ "${CROSS_COMPILE}" == "true" ]; then
           pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
         fi
-        make -C '{{ .PROJECT }}' clean
+        make -C "${PROJECT}" clean
 
   destroy:
     cmds:
