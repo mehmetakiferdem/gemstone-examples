@@ -21,6 +21,7 @@ vars:
     }
 
 env:
+  PROJDIR: '{{ .ROOT_DIR }}'
   PROCESSOR_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
   MCU_PLUS_SDK_PATH: "${PROCESSOR_SDK_PATH}/mcu_plus_sdk_j722s_10_01_00_22"
   TOOLS_PATH: '{{ .TI_INSTALL_DIR }}'

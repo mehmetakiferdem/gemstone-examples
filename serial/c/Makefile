@@ -1,6 +1,5 @@
 TARGET = serial
 
-PROJDIR := $(realpath $(CURDIR)/../..)
 BUILDDIR := $(PROJDIR)/build/examples/$(TARGET)/c
 
 C_SOURCES = main.c
