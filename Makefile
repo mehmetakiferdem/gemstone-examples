@@ -1,3 +1,3 @@
-SUBDIRS := camera gpio magnetometer mcu preempt-rt pwm serial
+SUBDIRS := camera canbus gpio magnetometer mcu preempt-rt pwm serial
 
 include $(PROJDIR)/subdirs.mk
