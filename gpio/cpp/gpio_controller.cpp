@@ -68,20 +68,20 @@ void GpioController::delay_ms(int ms)
     }
 }
 
-bool GpioController::initialize()
+int GpioController::initialize()
 {
     m_chip1 = gpiod_chip_open_by_name("gpiochip1");
     if (!m_chip1)
     {
         std::cerr << "Failed to open gpiochip1" << std::endl;
-        return false;
+        return 1;
     }
 
     m_chip2 = gpiod_chip_open_by_name("gpiochip2");
     if (!m_chip2)
     {
         std::cerr << "Failed to open gpiochip2" << std::endl;
-        return false;
+        return 1;
     }
 
     m_line_gpio4 = gpiod_chip_get_line(m_chip1, 38);
@@ -92,12 +92,12 @@ bool GpioController::initialize()
     if (!m_line_gpio4 || !m_line_led_red || !m_line_led_green || !m_line_gpio17)
     {
         std::cerr << "Failed to get GPIO lines" << std::endl;
-        return false;
+        return 1;
     }
 
-    if (!configure_outputs() || !configure_inputs())
+    if (configure_outputs() || configure_inputs())
     {
-        return false;
+        return 1;
     }
 
     // Read initial state of input
@@ -105,22 +105,22 @@ bool GpioController::initialize()
     if (m_prev_input_state < 0)
     {
         std::cerr << "Failed to read initial input state" << std::endl;
-        return false;
+        return 1;
     }
 
     print_configuration();
 
-    return true;
+    return 0;
 }
 
-bool GpioController::configure_outputs()
+int GpioController::configure_outputs()
 {
     // Configure gpiochip1-38 as active-high output with value 0
     int ret = gpiod_line_request_output(m_line_gpio4, "gpio_example", 0);
     if (ret < 0)
     {
         std::cerr << "Failed to configure line1-38 as output" << std::endl;
-        return false;
+        return 1;
     }
 
     // Configure gpiochip1-11 as active-low output with value 0
@@ -128,7 +128,7 @@ bool GpioController::configure_outputs()
     if (ret < 0)
     {
         std::cerr << "Failed to configure line1-11 as active-low output" << std::endl;
-        return false;
+        return 1;
     }
 
     // Configure gpiochip1-12 as active-high output with value 0
@@ -136,23 +136,23 @@ bool GpioController::configure_outputs()
     if (ret < 0)
     {
         std::cerr << "Failed to configure line1-12 as output" << std::endl;
-        return false;
+        return 1;
     }
 
-    return true;
+    return 0;
 }
 
-bool GpioController::configure_inputs()
+int GpioController::configure_inputs()
 {
     // Configure gpiochip2-8 as pull-up input
     int ret = gpiod_line_request_input_flags(m_line_gpio17, "gpio_example", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
     if (ret < 0)
     {
         std::cerr << "Failed to configure line2-8 as input" << std::endl;
-        return false;
+        return 1;
     }
 
-    return true;
+    return 0;
 }
 
 void GpioController::print_configuration()

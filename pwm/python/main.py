@@ -19,12 +19,13 @@
 
 import signal
 import sys
+from typing import Optional
 
 from gpio_controller import GpioController
 from pwm_sysfs import PwmSysfs
 
 # Global variables
-g_gpio_controller = GpioController()
+g_gpio_controller: Optional["GpioController"] = None
 
 
 def signal_handler(sig, frame):
@@ -52,6 +53,8 @@ def main():
 
     print("PWM configuration complete:")
     print("- pwmchip2/pwm0 (GPIO18)  : period 1s, duty-cycle 0.5s")
+
+    g_gpio_controller = GpioController()
 
     if g_gpio_controller.initialize():
         print("Failed to initialize GPIO controller", file=sys.stderr)

@@ -33,11 +33,11 @@ class SerialPort:
     def __del__(self):
         self.close()
 
-    def configure(self, device: str, baud_rate: int) -> bool:
+    def configure(self, device: str, baud_rate: int) -> int:
         if baud_rate not in self.SUPPORTED_BAUD_RATES:
             print(f"Unsupported baud rate: {baud_rate}")
             print(f"Supported rates: {', '.join(map(str, self.SUPPORTED_BAUD_RATES))}")
-            return False
+            return 1
 
         try:
             self._serial_connection = serial.Serial(
@@ -51,10 +51,10 @@ class SerialPort:
                 rtscts=False,
                 dsrdtr=False,
             )
-            return True
+            return 0
         except serial.SerialException as e:
             print(f"Error opening serial port: {e}")
-            return False
+            return 1
 
     def close(self) -> None:
         if self._serial_connection and self._serial_connection.is_open:
@@ -88,15 +88,15 @@ class Terminal:
     def __del__(self):
         self.restore()
 
-    def configure(self) -> bool:
+    def configure(self) -> int:
         try:
             self._original_termios = termios.tcgetattr(sys.stdin.fileno())
             tty.setraw(sys.stdin.fileno())
             self.m_is_configured = True
-            return True
+            return 0
         except (termios.error, OSError) as e:
             print(f"Error setting terminal to raw mode: {e}")
-            return False
+            return 1
 
     def restore(self) -> None:
         if self.m_is_configured and self._original_termios:
@@ -108,10 +108,7 @@ class Terminal:
 
 
 class SerialTerminal:
-    _s_instance: Optional["SerialTerminal"] = None
-
     def __init__(self):
-        SerialTerminal._s_instance = self
         self.m_serial_port = SerialPort()
         self.m_terminal = Terminal()
         self.m_is_running = False
@@ -120,11 +117,10 @@ class SerialTerminal:
         self.m_serial_port.close()
         self.m_terminal.restore()
         print("\nShutting down...")
-        SerialTerminal._s_instance = None
 
-    def initialize(self, device: str, baud_rate: int) -> bool:
-        if not self.m_serial_port.configure(device, baud_rate):
-            return False
+    def initialize(self, device: str, baud_rate: int) -> int:
+        if self.m_serial_port.configure(device, baud_rate):
+            return 1
 
         print("=" * 46)
         print(f"port is     : {device}")
@@ -133,10 +129,10 @@ class SerialTerminal:
         print("Serial terminal started. Press Ctrl+C to exit.")
         print("=" * 46)
 
-        if not self.m_terminal.configure():
-            return False
+        if self.m_terminal.configure():
+            return 1
 
-        return True
+        return 0
 
     def run(self) -> None:
         if not self.m_serial_port.is_open():
@@ -185,8 +181,3 @@ class SerialTerminal:
 
     def stop(self) -> None:
         self.m_is_running = False
-
-    @staticmethod
-    def signal_handler(sig, frame) -> None:
-        if SerialTerminal._s_instance:
-            SerialTerminal._s_instance.stop()

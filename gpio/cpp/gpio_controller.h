@@ -29,7 +29,7 @@ class GpioController
     GpioController(const GpioController&) = delete;
     GpioController& operator=(const GpioController&) = delete;
 
-    bool initialize();
+    int initialize();
     void run();
     void stop();
 
@@ -46,8 +46,8 @@ class GpioController
     int m_prev_input_state {};
     int m_current_input_state {};
 
-    bool configure_outputs();
-    bool configure_inputs();
+    int configure_outputs();
+    int configure_inputs();
     void print_configuration();
     static void delay_ms(int ms);
 };

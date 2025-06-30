@@ -21,7 +21,7 @@
 #include <iostream>
 
 // Global variables
-GpioController g_gpio_controller {};
+static GpioController g_gpio_controller {};
 
 void signal_handler([[maybe_unused]] int sig)
 {
@@ -34,7 +34,7 @@ int main()
     std::signal(SIGINT, signal_handler);
     std::signal(SIGTERM, signal_handler);
 
-    if (!g_gpio_controller.initialize())
+    if (g_gpio_controller.initialize())
     {
         std::cerr << "Failed to initialize GPIO controller" << std::endl;
         return EXIT_FAILURE;

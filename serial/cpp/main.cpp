@@ -20,19 +20,46 @@
 #include <cstdlib>
 #include <getopt.h>
 #include <iostream>
+#include <memory>
 #include <signal.h>
 #include <string>
+
+// Global variables
+static std::unique_ptr<SerialTerminal> g_serial_terminal {};
+
+void signal_handler([[maybe_unused]] int sig)
+{
+    std::cout << "\nShutting down..." << std::endl;
+    if (g_serial_terminal)
+    {
+        g_serial_terminal->stop();
+    }
+}
+
+void print_usage(std::string_view program_name)
+{
+    std::cout << "Usage: " << program_name << " [OPTIONS]" << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "  -d, --device DEVICE    Serial device" << std::endl;
+    std::cout << "  -b, --baud RATE        Baud rate" << std::endl;
+    std::cout << "  -h, --help             Show this help message" << std::endl;
+    std::cout << std::endl
+              << "Supported baud rates: 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600" << std::endl;
+    std::cout << std::endl << "Example: " << program_name << " -d /dev/ttyUSB0 -b 9600" << std::endl;
+}
 
 int main(int argc, char* argv[])
 {
     std::string device;
     int baud_rate = -1;
     int opt;
-
     static struct option long_options[] = {{"device", required_argument, 0, 'd'},
                                            {"baud", required_argument, 0, 'b'},
                                            {"help", no_argument, 0, 'h'},
                                            {0, 0, 0, 0}};
+
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
 
     while ((opt = getopt_long(argc, argv, "d:b:h", long_options, nullptr)) != -1)
     {
@@ -50,31 +77,28 @@ int main(int argc, char* argv[])
             }
             break;
         case 'h':
-            SerialTerminal::print_usage(argv[0]);
+            print_usage(argv[0]);
             return EXIT_SUCCESS;
         default:
-            SerialTerminal::print_usage(argv[0]);
+            print_usage(argv[0]);
             return EXIT_FAILURE;
         }
     }
 
     if (device.empty() || baud_rate == -1)
     {
-        SerialTerminal::print_usage(argv[0]);
+        print_usage(argv[0]);
         return EXIT_FAILURE;
     }
 
-    SerialTerminal terminal;
+    g_serial_terminal = std::make_unique<SerialTerminal>();
 
-    signal(SIGINT, SerialTerminal::signal_handler);
-    signal(SIGTERM, SerialTerminal::signal_handler);
-
-    if (!terminal.initialize(device, baud_rate))
+    if (g_serial_terminal->initialize(device, baud_rate))
     {
         return EXIT_FAILURE;
     }
 
-    terminal.run();
+    g_serial_terminal->run();
 
     return EXIT_SUCCESS;
 }

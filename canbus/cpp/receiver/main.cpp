@@ -35,16 +35,16 @@ void print_usage(std::string_view program_name)
 
 int main(int argc, char* argv[])
 {
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
+
     if (argc < 2)
     {
         print_usage(argv[0]);
         return EXIT_FAILURE;
     }
 
-    std::string_view interface_name = argv[1];
-
-    signal(SIGINT, signal_handler);
-    signal(SIGTERM, signal_handler);
+    std::string_view interface_name {argv[1]};
 
     CanReceiver receiver {interface_name};
 

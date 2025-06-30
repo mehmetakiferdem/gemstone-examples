@@ -43,15 +43,15 @@ def print_usage(program_name: str):
 def main():
     global g_sender
 
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
     if len(sys.argv) < 2:
         print_usage(sys.argv[0])
         return 1
 
     interface_name = sys.argv[1]
     g_sender = CanSender(interface_name)
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
 
     if g_sender.initialize():
         print("Failed to initialize CAN sender", file=sys.stderr)

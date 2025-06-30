@@ -27,12 +27,10 @@ class SerialPort
     SerialPort();
     ~SerialPort();
 
-    // Non-copyable
     SerialPort(const SerialPort&) = delete;
     SerialPort& operator=(const SerialPort&) = delete;
 
-    bool configure(const std::string& device, int baud_rate);
-    void close();
+    int configure(const std::string& device, int baud_rate);
     bool is_open() const;
     int get_fd() const;
 
@@ -51,7 +49,7 @@ class Terminal
     Terminal(const Terminal&) = delete;
     Terminal& operator=(const Terminal&) = delete;
 
-    bool configure();
+    int configure();
     void restore();
 
   private:
@@ -70,16 +68,11 @@ class SerialTerminal
     SerialTerminal(const SerialTerminal&) = delete;
     SerialTerminal& operator=(const SerialTerminal&) = delete;
 
-    bool initialize(const std::string& device, int baud_rate);
+    int initialize(const std::string& device, int baud_rate);
     void run();
     void stop();
 
-    static void print_usage(const char* program_name);
-    static void signal_handler(int sig);
-
   private:
-    static SerialTerminal* s_instance;
-
     SerialPort m_serial_port {};
     Terminal m_terminal {};
     bool m_is_running {};

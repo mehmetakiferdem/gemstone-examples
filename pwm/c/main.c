@@ -38,12 +38,12 @@ typedef struct
 } pwm_sysfs_t;
 
 // Global variables
-pwm_sysfs_t g_pwm_gpio18 = {2, 0, 1E9, 5E8}; // GPIO18 set to PWM with 1s period, 0.5s duty-cycle
-struct gpiod_chip* g_chip1 = NULL;
-struct gpiod_chip* g_chip2 = NULL;
-struct gpiod_line* g_line_led_red = NULL;   // LED_RED output GPIO
-struct gpiod_line* g_line_led_green = NULL; // LED_GREEN output GPIO
-struct gpiod_line* g_line_gpio17 = NULL;    // GPIO17 set to input with pull-up resistor enabled (normally high)
+static pwm_sysfs_t g_pwm_gpio18 = {2, 0, 1E9, 5E8}; // GPIO18 set to PWM with 1s period, 0.5s duty-cycle
+static struct gpiod_chip* g_chip1 = NULL;
+static struct gpiod_chip* g_chip2 = NULL;
+static struct gpiod_line* g_line_led_red = NULL;   // LED_RED output GPIO
+static struct gpiod_line* g_line_led_green = NULL; // LED_GREEN output GPIO
+static struct gpiod_line* g_line_gpio17 = NULL;    // GPIO17 set to input with pull-up resistor enabled (normally high)
 
 int write_to_file(const char* path, const char* value)
 {
@@ -128,6 +128,7 @@ void cleanup(void)
 void signal_handler(__attribute__((unused)) int sig)
 {
     printf("\nShutting down...\n");
+    // Trigger cleanup
     exit(0);
 }
 

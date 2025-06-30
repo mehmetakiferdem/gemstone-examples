@@ -25,12 +25,12 @@
 #include <unistd.h>
 
 // Global variables
-struct gpiod_chip* g_chip1 = NULL;
-struct gpiod_chip* g_chip2 = NULL;
-struct gpiod_line* g_line_gpio4 = NULL;     // GPIO4 set to active-high output with low value
-struct gpiod_line* g_line_led_red = NULL;   // LED_RED output GPIO
-struct gpiod_line* g_line_led_green = NULL; // LED_GREEN output GPIO
-struct gpiod_line* g_line_gpio17 = NULL;    // GPIO17 set to input with pull-up resistor enabled (normally high)
+static struct gpiod_chip* g_chip1 = NULL;
+static struct gpiod_chip* g_chip2 = NULL;
+static struct gpiod_line* g_line_gpio4 = NULL;     // GPIO4 set to active-high output with low value
+static struct gpiod_line* g_line_led_red = NULL;   // LED_RED output GPIO
+static struct gpiod_line* g_line_led_green = NULL; // LED_GREEN output GPIO
+static struct gpiod_line* g_line_gpio17 = NULL;    // GPIO17 set to input with pull-up resistor enabled (normally high)
 
 void cleanup(void)
 {

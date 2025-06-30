@@ -44,7 +44,7 @@ class GpioController:
     def __del__(self):
         self.cleanup()
 
-    def initialize(self) -> bool:
+    def initialize(self) -> int:
         try:
             self.m_chip1 = gpiod.Chip("/dev/gpiochip1")
 
@@ -74,17 +74,17 @@ class GpioController:
 
         except Exception as e:
             print(f"Failed to initialize GPIO: {e}", file=sys.stderr)
-            return False
+            return 1
 
         # Read initial state of input
         try:
             self.m_prev_input_state = self.m_input_request.get_value(self.m_line_gpio17).value
         except Exception as e:
             print(f"Failed to read initial input state: {e}", file=sys.stderr)
-            return False
+            return 1
 
         self._print_configuration()
-        return True
+        return 0
 
     def _print_configuration(self) -> None:
         print("GPIO configuration complete:")

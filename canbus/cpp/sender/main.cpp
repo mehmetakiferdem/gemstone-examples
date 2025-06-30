@@ -42,6 +42,9 @@ void print_usage(std::string_view program_name)
 
 int main(int argc, char* argv[])
 {
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
+
     if (argc < 2)
     {
         print_usage(argv[0]);
@@ -50,9 +53,6 @@ int main(int argc, char* argv[])
 
     std::string_view interface_name = argv[1];
     g_sender = std::make_unique<CanSender>(interface_name);
-
-    signal(SIGINT, signal_handler);
-    signal(SIGTERM, signal_handler);
 
     if (g_sender->initialize())
     {

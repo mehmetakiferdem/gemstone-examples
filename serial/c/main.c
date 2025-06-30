@@ -27,12 +27,14 @@
 #include <unistd.h>
 
 // Global variables
-int g_serial_fd = -1;
-struct termios g_original_termios;
-int g_is_terminal_configured = 0;
+static int g_serial_fd = -1;
+static struct termios g_original_termios;
+static int g_is_terminal_configured = 0;
 
 void signal_handler(__attribute__((unused)) int sig)
 {
+    printf("\nShutting down...\n");
+    // Trigger cleanup
     exit(0);
 }
 
@@ -46,7 +48,6 @@ void cleanup()
     {
         tcsetattr(STDIN_FILENO, TCSANOW, &g_original_termios);
     }
-    printf("\nShutting down...\n");
 }
 
 speed_t get_baud_rate(int baud)
@@ -241,7 +242,6 @@ int main(int argc, char* argv[])
     const char* device = NULL;
     int baud_rate = -1;
     int opt;
-
     static struct option long_options[] = {{"device", required_argument, 0, 'd'},
                                            {"baud", required_argument, 0, 'b'},
                                            {"help", no_argument, 0, 'h'},

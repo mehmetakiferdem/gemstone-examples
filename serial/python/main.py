@@ -20,11 +20,26 @@
 import argparse
 import signal
 import sys
+from typing import Optional
 
 from serial_terminal import SerialTerminal
 
+g_serial_terminal: Optional["SerialTerminal"] = None
+
+
+def signal_handler(sig, frame) -> None:
+    global g_serial_terminal
+
+    if g_serial_terminal:
+        g_serial_terminal.stop()
+
 
 def main():
+    global g_serial_terminal
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter,
         prog="serial.py",
@@ -46,15 +61,12 @@ def main():
         print(f"Invalid baud rate: {args.baud}")
         return 1
 
-    terminal = SerialTerminal()
+    g_serial_terminal = SerialTerminal()
 
-    signal.signal(signal.SIGINT, SerialTerminal.signal_handler)
-    signal.signal(signal.SIGTERM, SerialTerminal.signal_handler)
-
-    if not terminal.initialize(args.device, args.baud):
+    if g_serial_terminal.initialize(args.device, args.baud):
         return 1
 
-    terminal.run()
+    g_serial_terminal.run()
     return 0
 
 

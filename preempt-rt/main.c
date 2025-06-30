@@ -36,7 +36,7 @@
 #define RT_PRIORITY 80 // Real-time priority (1-99, higher = more priority)
 
 // Global variables
-static volatile sig_atomic_t g_running = 1;
+static volatile sig_atomic_t g_is_running = 1;
 static struct timespec g_task_times[NUM_ITERATIONS];
 static long g_latencies[NUM_ITERATIONS];
 static int g_iteration_count = 0;
@@ -44,7 +44,7 @@ static int g_iteration_count = 0;
 void signal_handler(__attribute__((unused)) int sig)
 {
     printf("\nShutting down...\n");
-    g_running = 0;
+    g_is_running = 0;
 }
 
 static inline long long timespec_to_ns(struct timespec* ts)
@@ -78,13 +78,13 @@ void* rt_task(__attribute__((__unused__)) void* arg)
     clock_gettime(CLOCK_MONOTONIC, &next_period);
     timespec_add_ns(&next_period, TASK_PERIOD_NS);
 
-    while (g_running && g_iteration_count < NUM_ITERATIONS)
+    while (g_is_running && g_iteration_count < NUM_ITERATIONS)
     {
         // Wait for next period
         int sleep_ret = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_period, NULL);
         if (sleep_ret != 0)
         {
-            if (sleep_ret == EINTR && !g_running)
+            if (sleep_ret == EINTR && !g_is_running)
             {
                 break; // Graceful shutdown on signal
             }
@@ -213,6 +213,9 @@ int main()
     pthread_attr_t attr;
     int ret;
 
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
+
     printf("Linux Preempt-RT Real-Time Task Example\n");
     printf("========================================\n");
 
@@ -227,9 +230,6 @@ int main()
         }
         fclose(f);
     }
-
-    signal(SIGINT, signal_handler);
-    signal(SIGTERM, signal_handler);
 
     // Lock memory to prevent page faults in RT sections
     ret = mlockall(MCL_CURRENT | MCL_FUTURE);

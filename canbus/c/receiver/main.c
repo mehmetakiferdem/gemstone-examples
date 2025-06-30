@@ -80,7 +80,11 @@ int main(int argc, char* argv[])
     }
 
     strcpy(ifr.ifr_name, ifname);
-    ioctl(g_sock, SIOCGIFINDEX, &ifr);
+    if (ioctl(g_sock, SIOCGIFINDEX, &ifr) < 0)
+    {
+        perror("Error getting interface index");
+        return EXIT_FAILURE;
+    }
 
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifr.ifr_ifindex;

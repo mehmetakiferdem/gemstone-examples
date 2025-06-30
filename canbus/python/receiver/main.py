@@ -36,14 +36,14 @@ def print_usage(program_name: str):
 
 
 def main():
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
     if len(sys.argv) < 2:
         print_usage(sys.argv[0])
         return 1
 
     interface_name = sys.argv[1]
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
 
     receiver = CanReceiver(interface_name)
 

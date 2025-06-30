@@ -116,19 +116,24 @@ class VideoProcessor:
 
         os.makedirs(self.m_snapshot_dir, exist_ok=True)
 
-    def _initialize_video(self) -> bool:
+    def __del__(self):
+        if self.m_cap:
+            self.m_cap.release()
+        cv2.destroyAllWindows()
+
+    def _initialize_video(self) -> int:
         if self.m_is_camera:
             self.m_cap = cv2.VideoCapture(self.m_camera_index)
             if not self.m_cap.isOpened():
                 print(f"Error: Could not open camera {self.m_camera_index}", file=sys.stderr)
-                return False
+                return 1
 
             print(f"Camera {self.m_camera_index} initialized")
         else:
             self.m_cap = cv2.VideoCapture(self.m_video_path)
             if not self.m_cap.isOpened():
                 print(f"Error: Could not open video file {self.m_video_path}", file=sys.stderr)
-                return False
+                return 1
 
             self.m_total_frames = int(self.m_cap.get(cv2.CAP_PROP_FRAME_COUNT))
             self.m_video_fps = self.m_cap.get(cv2.CAP_PROP_FPS)
@@ -142,7 +147,7 @@ class VideoProcessor:
             print(f"Frame duration: {self.m_frame_duration:.4f} seconds")
 
         self.m_last_frame_time = time.time()
-        return True
+        return 0
 
     def _calculate_fps(self):
         self.m_fps_counter += 1
@@ -264,9 +269,9 @@ class VideoProcessor:
 
         return processed_frame
 
-    def _handle_keyboard_input(self, key: int) -> bool:
+    def _handle_keyboard_input(self, key: int) -> int:
         if key == ord("q"):
-            return False
+            return 1
         elif key == ord("f"):
             self.m_effects["faces"] = not self.m_effects["faces"]
             self.m_face_tracker.m_face_count = 0
@@ -286,10 +291,10 @@ class VideoProcessor:
             cv2.imwrite(filename, self.m_processed_frame)
             print(f"Snapshot saved as {filename}")
 
-        return True
+        return 0
 
     def run(self):
-        if not self._initialize_video():
+        if self._initialize_video():
             return
 
         print("\nVideo Processor Controls:")
@@ -330,16 +335,9 @@ class VideoProcessor:
                 self._wait_for_frame_timing()
 
                 key = cv2.waitKey(1) & 0xFF
-                if not self._handle_keyboard_input(key):
+                if self._handle_keyboard_input(key):
+                    print("\nShutting down...")
                     break
 
         except KeyboardInterrupt:
-            print("\nInterrupted by user")
-        finally:
-            self._cleanup()
-
-    def _cleanup(self):
-        if self.m_cap:
-            self.m_cap.release()
-        cv2.destroyAllWindows()
-        print("Shutting down...")
+            print("\nShutting down...")

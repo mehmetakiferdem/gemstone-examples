@@ -39,7 +39,7 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    if not g_gpio_controller.initialize():
+    if g_gpio_controller.initialize():
         print("Failed to initialize GPIO controller", file=sys.stderr)
         return 1
 

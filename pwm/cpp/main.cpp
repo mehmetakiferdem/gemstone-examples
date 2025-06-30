@@ -22,7 +22,7 @@
 #include <iostream>
 
 // Global variables
-GpioController g_gpio_controller {};
+static GpioController g_gpio_controller {};
 
 void signal_handler([[maybe_unused]] int sig)
 {

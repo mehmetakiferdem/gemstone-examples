@@ -6,28 +6,31 @@ version: '3'
 dotenv: ['.env']
 
 vars:
-  BUILD_DIR: '{{ .ROOT_DIR }}/build'
-  DOWNLOAD_DIR: '{{ .BUILD_DIR }}/downloads'
-  TOOLCHAINS_DIR: '{{ .BUILD_DIR }}/${DISTRO_BASE}-${DISTRO_SUITE}'
-  TI_INSTALL_DIR: '{{ .BUILD_DIR }}/ti'
+  BUILD_DIR: "{{ .ROOT_DIR }}/build"
+  DOWNLOAD_DIR: "{{ .BUILD_DIR }}/downloads"
+  TOOLCHAINS_DIR: "{{ .BUILD_DIR }}/${DISTRO_BASE}-${DISTRO_SUITE}"
+  TI_INSTALL_DIR: "{{ .BUILD_DIR }}/ti"
   URLS:
     map: {
-      toolchains: 'https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz',
-      ti_j722s_rtos_sdk: 'https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/ti-processor-sdk-rtos-j722s-evm-10_01_00_04.tar.gz',
-      ti_j722s_mcusw_sdk: 'https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/MCUSW_J722S_10.01.00.03.zip',
-      ti_sysconfig: 'https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-nsUM6f7Vvb/1.20.0.3587/sysconfig-1.20.0_3587-setup.run',
-      ti_cgt_c7000: 'https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-707zYe3Rik/4.1.0.LTS/ti_cgt_c7000_4.1.0.LTS_linux-x64_installer.bin',
-      ti_cgt_armllvm: 'https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-ayxs93eZNN/3.2.2.LTS/ti_cgt_armllvm_3.2.2.LTS_linux-x64_installer.bin'
+      toolchains: "https://github.com/t3gemstone/toolchains/releases/latest/download/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz",
+      face_detection_yunet: "https://github.com/opencv/opencv_zoo/raw/refs/heads/main/models/face_detection_yunet/face_detection_yunet_2023mar_int8.onnx",
+      face_detection_sample: "https://github.com/intel-iot-devkit/sample-videos/raw/refs/heads/master/face-demographics-walking.mp4",
+      ti_j722s_rtos_sdk: "https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/ti-processor-sdk-rtos-j722s-evm-10_01_00_04.tar.gz",
+      ti_j722s_mcusw_sdk: "https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/MCUSW_J722S_10.01.00.03.zip",
+      ti_sysconfig: "https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-nsUM6f7Vvb/1.20.0.3587/sysconfig-1.20.0_3587-setup.run",
+      ti_cgt_c7000: "https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-707zYe3Rik/4.1.0.LTS/ti_cgt_c7000_4.1.0.LTS_linux-x64_installer.bin",
+      ti_cgt_armllvm: "https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-ayxs93eZNN/3.2.2.LTS/ti_cgt_armllvm_3.2.2.LTS_linux-x64_installer.bin"
     }
 
 env:
-  PROJDIR: '{{ .ROOT_DIR }}'
-  PROCESSOR_SDK_PATH: '{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04'
+  PROJDIR: "{{ .ROOT_DIR }}"
+  PROCESSOR_SDK_PATH: "{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04"
+  CGT_TI_ARM_CLANG_PATH: "{{ .TI_INSTALL_DIR }}/ti-cgt-armllvm_3.2.2.LTS"
+  CGT_TI_C7000_PATH: "{{ .TI_INSTALL_DIR }}/ti-cgt-c7000_4.1.0.LTS"
   MCU_PLUS_SDK_PATH: "${PROCESSOR_SDK_PATH}/mcu_plus_sdk_j722s_10_01_00_22"
-  TOOLS_PATH: '{{ .TI_INSTALL_DIR }}'
-  SYSCFG_PATH: '{{ .TI_INSTALL_DIR }}/sysconfig_1.20.0'
-  CGT_TI_C7000_PATH: '{{ .TI_INSTALL_DIR }}/ti-cgt-c7000_4.1.0.LTS'
-  CGT_TI_ARM_CLANG_PATH: '{{ .TI_INSTALL_DIR }}/ti-cgt-armllvm_3.2.2.LTS'
+  MCUSW_PATH: "{{ .TI_INSTALL_DIR }}/MCUSW_J722S_10.01.00.03"
+  SYSCFG_PATH: "{{ .TI_INSTALL_DIR }}/sysconfig_1.20.0"
+  TOOLS_PATH: "{{ .TI_INSTALL_DIR }}"
 
 tasks:
 
@@ -52,71 +55,114 @@ tasks:
 
   wget:
     internal: true
+    silent: true
     cmds:
-      - mkdir -p $(dirname {{ .PATH }})
-      - wget --no-clobber --continue --quiet --show-progress -O {{ .PATH }} {{ .URL }} || true
+      - mkdir -p $(dirname "{{ .PATH }}")
+      - wget --no-clobber --continue --quiet --show-progress -O "{{ .PATH }}" "{{ .URL }}" || true
     requires:
       vars: [ URL, PATH ]
+    status:
+      - test -f "{{ .PATH }}"
+
+  download:
+    internal: true
+    silent: true
+    cmds:
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "toolchains" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "face_detection_yunet" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/face_detection_yunet_2023mar_int8.onnx"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "face_detection_sample" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/face_detection_sample.mp4"
+
+  extract:
+    internal: true
+    silent: true
+    cmds:
+      - |
+        if [ ! -d "{{ .TOOLCHAINS_DIR }}" ]; then
+          mkdir -p "{{ .TOOLCHAINS_DIR }}"
+          tar xf "{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz" --directory "{{ .TOOLCHAINS_DIR }}"
+        fi
 
   fetch:
     silent: true
     cmds:
-      - rm -rf '{{ .TOOLCHAINS_DIR }}'
-      - mkdir -p '{{ .TOOLCHAINS_DIR }}'
+      - task: download
+      - task: extract
+
+  download-ti:
+    internal: true
+    silent: true
+    cmds:
       - task: wget
         vars:
-          URL: '{{ get .URLS "toolchains" }}'
-          PATH: '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz'
-      - tar xf '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz' --directory "{{ .TOOLCHAINS_DIR }}"
-    status:
-      - test -f '{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-ubuntu-jammy.tar.gz'
+          URL: '{{ get .URLS "ti_j722s_rtos_sdk" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "ti_j722s_mcusw_sdk" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "ti_sysconfig" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/sysconfig.run"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "ti_cgt_c7000" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/ti_cgt_c7000.bin"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "ti_cgt_armllvm" }}'
+          PATH: "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin"
+
+  extract-ti:
+    internal: true
+    silent: true
+    cmds:
+      - mkdir -p "{{ .TI_INSTALL_DIR }}"
+      - |
+        if [ ! -d "${PROCESSOR_SDK_PATH}" ]; then
+          tar xf "{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz" --directory "{{ .TI_INSTALL_DIR }}"
+        fi
+      - |
+        if [ ! -d "${MCUSW_PATH}" ]; then
+          unzip -q "{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip" -d "{{ .TI_INSTALL_DIR }}"
+        fi
+      - |
+        if [ ! -d "${SYSCFG_PATH}" ]; then
+          chmod +x "{{ .DOWNLOAD_DIR }}/sysconfig.run"
+          "{{ .DOWNLOAD_DIR }}/sysconfig.run" --mode unattended --prefix "${SYSCFG_PATH}}"
+        fi
+      - |
+        if [ ! -d "${CGT_TI_C7000_PATH}" ]; then
+          chmod +x "{{ .DOWNLOAD_DIR }}/ti_cgt_c7000.bin"
+          "{{ .DOWNLOAD_DIR }}/ti_cgt_c7000.bin" --mode unattended --prefix "{{ .TI_INSTALL_DIR }}"
+        fi
+      - |
+        if [ ! -d "${CGT_TI_ARM_CLANG_PATH}" ]; then
+          chmod +x "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin"
+          "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin" --mode unattended --prefix "{{ .TI_INSTALL_DIR }}"
+        fi
 
   fetch-ti:
     silent: true
     cmds:
-      - rm -rf '{{ .TI_INSTALL_DIR }}'
-      - mkdir -p '{{ .TI_INSTALL_DIR }}'
-      - task: wget
-        vars:
-          URL: '{{ get .URLS "ti_j722s_rtos_sdk" }}'
-          PATH: '{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz'
-      - tar xf '{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz' --directory "{{ .TI_INSTALL_DIR }}"
-      - task: wget
-        vars:
-          URL: '{{ get .URLS "ti_j722s_mcusw_sdk" }}'
-          PATH: '{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip'
-      - unzip -q '{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip' -d "{{ .TI_INSTALL_DIR }}"
-      - task: wget
-        vars:
-          URL: '{{ get .URLS "ti_sysconfig" }}'
-          PATH: '{{ .DOWNLOAD_DIR }}/sysconfig.run'
-      - chmod +x '{{ .DOWNLOAD_DIR }}/sysconfig.run'
-      - '{{ .DOWNLOAD_DIR }}/sysconfig.run --mode unattended --prefix {{ .SYSCFG_PATH }}'
-      - task: wget
-        vars:
-          URL: '{{ get .URLS "ti_cgt_c7000" }}'
-          PATH: '{{ .DOWNLOAD_DIR }}/ti_cgt_c7000.bin'
-      - chmod +x '{{ .DOWNLOAD_DIR }}/ti_cgt_c7000.bin'
-      - '{{ .DOWNLOAD_DIR }}/ti_cgt_c7000.bin --mode unattended --prefix {{ .TI_INSTALL_DIR }}'
-      - task: wget
-        vars:
-          URL: '{{ get .URLS "ti_cgt_armllvm" }}'
-          PATH: '{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin'
-      - chmod +x '{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin'
-      - '{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin --mode unattended --prefix {{ .TI_INSTALL_DIR }}'
-    status:
-      - test -f '{{ .DOWNLOAD_DIR }}/ti-j722s-rtos-sdk.tar.gz'
-      - test -f '{{ .DOWNLOAD_DIR }}/mcusw-j722s.zip'
-      - test -f '{{ .DOWNLOAD_DIR }}/sysconfig.run'
-      - test -f '{{ .DOWNLOAD_DIR }}/ti_cgt_c7000.bin'
-      - test -f '{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin'
+      - task: download-ti
+      - task: extract-ti
 
   run-ti:
     cmds:
       - task: fetch-ti
       - |
         if [ "${CROSS_COMPILE}" == "true" ]; then
-          pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+          pushd "{{ .TOOLCHAINS_DIR }}" >/dev/null && source ./env && popd >/dev/null
         fi
         make -C mcu run-ti
 
@@ -125,7 +171,7 @@ tasks:
       - task: fetch
       - |
         if [ "${CROSS_COMPILE}" == "true" ]; then
-          pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+          pushd "{{ .TOOLCHAINS_DIR }}" >/dev/null && source ./env && popd >/dev/null
         fi
         make -C "${PROJECT}"
 
@@ -134,11 +180,53 @@ tasks:
       - task: fetch
       - |
         if [ "${CROSS_COMPILE}" == "true" ]; then
-          pushd {{ .TOOLCHAINS_DIR }} >/dev/null && source ./env && popd >/dev/null
+          pushd "{{ .TOOLCHAINS_DIR }}" >/dev/null && source ./env && popd >/dev/null
         fi
         make -C "${PROJECT}" clean
 
-  destroy:
+  create-virtual-camera:
+    silent: true
     cmds:
-      - rm -rf .venv
-      - rm -rf .devbox
+      - |
+        sudo modprobe -r v4l2loopback
+        sudo modprobe v4l2loopback devices=1 video_nr=0 exclusive_caps=1 card_label="Virtual Camera"
+        camera_index=$(ls /dev/video* | tail -n 1)
+        echo Streaming video in a loop to virtual camera "${camera_index}"...
+        echo Press [q] to quit.
+        ffmpeg -stream_loop -1 -re -i "{{ .DOWNLOAD_DIR }}/face_detection_sample.mp4" -vf format=yuv420p -f v4l2 "${camera_index}" &>/dev/null
+        sudo rmmod v4l2loopback
+    preconditions:
+      - sh: modinfo v4l2loopback
+        msg: "v4l2loopback kernel module is needed, install it from your package manager"
+
+  create-virtual-can:
+    silent: true
+    cmds:
+      - sudo modprobe -r vcan
+      - sudo modprobe vcan
+      - sudo ip link add dev vcan0 type vcan
+      - sudo ip link set vcan0 up
+    preconditions:
+      - sh: modinfo vcan
+        msg: "vcan kernel module is needed"
+
+  create-virtual-tty:
+    silent: true
+    cmds:
+      - sudo modprobe -r tty0tty
+      - sudo udevadm control --reload-rules
+      - sudo depmod
+      - sudo modprobe tty0tty
+    preconditions:
+      - sh: modinfo tty0tty
+        msg: "tty0tty kernel module is needed, download and compile from: https://github.com/freemed/tty0tty"
+
+  destroy:
+    prompt: 'All downloaded and extracted dependencies and build folder will be deleted. Do you want to continue?'
+    cmds:
+      - |
+        rm -rf \
+          .venv \
+          .devbox \
+          build \
+          __marimo__

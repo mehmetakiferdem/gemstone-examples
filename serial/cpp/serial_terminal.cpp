@@ -30,10 +30,14 @@ SerialPort::SerialPort() {}
 
 SerialPort::~SerialPort()
 {
-    close();
+    if (m_serial_fd >= 0)
+    {
+        ::close(m_serial_fd);
+        m_serial_fd = -1;
+    }
 }
 
-bool SerialPort::configure(const std::string& device, int baud_rate)
+int SerialPort::configure(const std::string& device, int baud_rate)
 {
     struct termios tty;
     speed_t speed;
@@ -41,14 +45,14 @@ bool SerialPort::configure(const std::string& device, int baud_rate)
     speed = get_baud_rate(baud_rate);
     if (speed == B0)
     {
-        return false;
+        return 1;
     }
 
     m_serial_fd = ::open(device.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
     if (m_serial_fd < 0)
     {
         perror("Error opening serial port");
-        return false;
+        return 1;
     }
 
     if (tcgetattr(m_serial_fd, &tty) != 0)
@@ -56,7 +60,7 @@ bool SerialPort::configure(const std::string& device, int baud_rate)
         perror("Error getting serial port attributes");
         ::close(m_serial_fd);
         m_serial_fd = -1;
-        return false;
+        return 1;
     }
 
     cfsetospeed(&tty, speed);
@@ -83,19 +87,10 @@ bool SerialPort::configure(const std::string& device, int baud_rate)
         perror("Error setting serial port attributes");
         ::close(m_serial_fd);
         m_serial_fd = -1;
-        return false;
+        return 1;
     }
 
-    return true;
-}
-
-void SerialPort::close()
-{
-    if (m_serial_fd >= 0)
-    {
-        ::close(m_serial_fd);
-        m_serial_fd = -1;
-    }
+    return 0;
 }
 
 bool SerialPort::is_open() const
@@ -142,14 +137,14 @@ Terminal::~Terminal()
     restore();
 }
 
-bool Terminal::configure()
+int Terminal::configure()
 {
     struct termios raw;
 
     if (tcgetattr(STDIN_FILENO, &m_original_termios) == -1)
     {
         perror("Error getting terminal attributes");
-        return false;
+        return 1;
     }
     m_is_configured = true;
 
@@ -164,10 +159,10 @@ bool Terminal::configure()
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
     {
         perror("Error setting terminal to raw mode");
-        return false;
+        return 1;
     }
 
-    return true;
+    return 0;
 }
 
 void Terminal::restore()
@@ -179,26 +174,20 @@ void Terminal::restore()
     }
 }
 
-SerialTerminal* SerialTerminal::s_instance = nullptr;
-
 SerialTerminal::SerialTerminal()
 {
-    s_instance = this;
 }
 
 SerialTerminal::~SerialTerminal()
 {
-    m_serial_port.close();
     m_terminal.restore();
-    std::cout << "\nShutting down..." << std::endl;
-    s_instance = nullptr;
 }
 
-bool SerialTerminal::initialize(const std::string& device, int baud_rate)
+int SerialTerminal::initialize(const std::string& device, int baud_rate)
 {
-    if (!m_serial_port.configure(device, baud_rate))
+    if (m_serial_port.configure(device, baud_rate))
     {
-        return false;
+        return 1;
     }
 
     std::cout << "==============================================" << std::endl;
@@ -207,12 +196,12 @@ bool SerialTerminal::initialize(const std::string& device, int baud_rate)
     std::cout << "Serial terminal started. Press Ctrl+C to exit." << std::endl;
     std::cout << "==============================================" << std::endl;
 
-    if (!m_terminal.configure())
+    if (m_terminal.configure())
     {
-        return false;
+        return 1;
     }
 
-    return true;
+    return 0;
 }
 
 void SerialTerminal::run()
@@ -292,24 +281,4 @@ void SerialTerminal::run()
 void SerialTerminal::stop()
 {
     m_is_running = false;
-}
-
-void SerialTerminal::signal_handler([[maybe_unused]] int sig)
-{
-    if (s_instance)
-    {
-        s_instance->stop();
-    }
-}
-
-void SerialTerminal::print_usage(const char* program_name)
-{
-    std::cout << "Usage: " << program_name << " [OPTIONS]" << std::endl;
-    std::cout << "Options:" << std::endl;
-    std::cout << "  -d, --device DEVICE    Serial device" << std::endl;
-    std::cout << "  -b, --baud RATE        Baud rate" << std::endl;
-    std::cout << "  -h, --help             Show this help message" << std::endl;
-    std::cout << std::endl
-              << "Supported baud rates: 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600" << std::endl;
-    std::cout << std::endl << "Example: " << program_name << " -d /dev/ttyUSB0 -b 9600" << std::endl;
 }

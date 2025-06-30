@@ -18,11 +18,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+import sys
 
 from video_processor import VideoProcessor
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(description="Video Processor")
 
     source_group = parser.add_mutually_exclusive_group(required=True)
@@ -47,7 +48,8 @@ def main():
     )
 
     processor.run()
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
