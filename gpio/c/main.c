@@ -26,27 +26,24 @@
 
 // Global variables
 static struct gpiod_chip* g_chip1 = NULL;
-static struct gpiod_chip* g_chip2 = NULL;
-static struct gpiod_line* g_line_gpio4 = NULL;     // GPIO4 set to active-high output with low value
+static struct gpiod_line* g_line_gpio27 = NULL;    // GPIO27 set to active-high output with low value
 static struct gpiod_line* g_line_led_red = NULL;   // LED_RED output GPIO
 static struct gpiod_line* g_line_led_green = NULL; // LED_GREEN output GPIO
-static struct gpiod_line* g_line_gpio17 = NULL;    // GPIO17 set to input with pull-up resistor enabled (normally high)
+static struct gpiod_line* g_line_gpio22 = NULL;    // GPIO22 set to input with pull-up resistor enabled (normally high)
 
 void cleanup(void)
 {
-    if (g_line_gpio4)
-        gpiod_line_release(g_line_gpio4);
+    if (g_line_gpio27)
+        gpiod_line_release(g_line_gpio27);
     if (g_line_led_red)
         gpiod_line_release(g_line_led_red);
     if (g_line_led_green)
         gpiod_line_release(g_line_led_green);
-    if (g_line_gpio17)
-        gpiod_line_release(g_line_gpio17);
+    if (g_line_gpio22)
+        gpiod_line_release(g_line_gpio22);
 
     if (g_chip1)
         gpiod_chip_close(g_chip1);
-    if (g_chip2)
-        gpiod_chip_close(g_chip2);
 }
 
 void signal_handler(__attribute__((unused)) int sig)
@@ -83,29 +80,22 @@ int main()
         return EXIT_FAILURE;
     }
 
-    g_chip2 = gpiod_chip_open_by_name("gpiochip2");
-    if (!g_chip2)
-    {
-        fprintf(stderr, "Failed to open gpiochip2\n");
-        return EXIT_FAILURE;
-    }
-
-    g_line_gpio4 = gpiod_chip_get_line(g_chip1, 38);
+    g_line_gpio27 = gpiod_chip_get_line(g_chip1, 33);
     g_line_led_red = gpiod_chip_get_line(g_chip1, 11);
     g_line_led_green = gpiod_chip_get_line(g_chip1, 12);
-    g_line_gpio17 = gpiod_chip_get_line(g_chip2, 8);
+    g_line_gpio22 = gpiod_chip_get_line(g_chip1, 41);
 
-    if (!g_line_gpio4 || !g_line_led_red || !g_line_led_green || !g_line_gpio17)
+    if (!g_line_gpio27 || !g_line_led_red || !g_line_led_green || !g_line_gpio22)
     {
         fprintf(stderr, "Failed to get GPIO lines\n");
         return EXIT_FAILURE;
     }
 
-    // Configure gpiochip1-38 as active-high output with value 0
-    ret = gpiod_line_request_output(g_line_gpio4, "gpio_example", 0);
+    // Configure gpiochip1-33 as active-high output with value 0
+    ret = gpiod_line_request_output(g_line_gpio27, "gpio_example", 0);
     if (ret < 0)
     {
-        fprintf(stderr, "Failed to configure line1-38 as output\n");
+        fprintf(stderr, "Failed to configure line1-33 as output\n");
         return EXIT_FAILURE;
     }
 
@@ -125,24 +115,24 @@ int main()
         return EXIT_FAILURE;
     }
 
-    // Configure gpiochip2-8 as pull-up input
-    ret = gpiod_line_request_input_flags(g_line_gpio17, "gpio_example", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
+    // Configure gpiochip1-41 as pull-up input
+    ret = gpiod_line_request_input_flags(g_line_gpio22, "gpio_example", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
     if (ret < 0)
     {
-        fprintf(stderr, "Failed to configure line2-8 as input\n");
+        fprintf(stderr, "Failed to configure line1-41 as input\n");
         return EXIT_FAILURE;
     }
 
     printf("GPIO configuration complete:\n");
-    printf("- gpiochip1-38 (GPIO4)    : active-high output, value=0\n");
+    printf("- gpiochip1-33 (GPIO27)   : active-high output, value=0\n");
     printf("- gpiochip1-11 (LED_RED)  : active-low output , value=0\n");
     printf("- gpiochip1-12 (LED_GREEN): active-high output, value=0\n");
-    printf("- gpiochip2-8  (GPIO17)   : pull-up input\n");
-    printf("\nWaiting for input transitions on GPIO17...\n");
+    printf("- gpiochip1-41 (GPIO22)   : pull-up input\n");
+    printf("\nWaiting for input transitions on GPIO22...\n");
     printf("Press Ctrl+C to exit\n\n");
 
     // Read initial state of input
-    prev_input_state = gpiod_line_get_value(g_line_gpio17);
+    prev_input_state = gpiod_line_get_value(g_line_gpio22);
     if (prev_input_state < 0)
     {
         fprintf(stderr, "Failed to read initial input state\n");
@@ -151,7 +141,7 @@ int main()
 
     while (1)
     {
-        current_input_state = gpiod_line_get_value(g_line_gpio17);
+        current_input_state = gpiod_line_get_value(g_line_gpio22);
         if (current_input_state < 0)
         {
             fprintf(stderr, "Failed to read input state\n");

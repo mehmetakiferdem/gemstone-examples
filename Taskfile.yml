@@ -1,4 +1,4 @@
-# T2 Foundation Gemstone Project [t3gemstone.org]
+# T3 Foundation Gemstone Project [t3gemstone.org]
 # SPDX-License-Identifier: Apache-2.0
 
 version: '3'
@@ -64,7 +64,7 @@ tasks:
     status:
       - test -f "{{ .PATH }}"
 
-  download:
+  fetch:
     internal: true
     silent: true
     cmds:
@@ -80,24 +80,13 @@ tasks:
         vars:
           URL: '{{ get .URLS "face_detection_sample" }}'
           PATH: "{{ .DOWNLOAD_DIR }}/face_detection_sample.mp4"
-
-  extract:
-    internal: true
-    silent: true
-    cmds:
       - |
         if [ ! -d "{{ .TOOLCHAINS_DIR }}" ]; then
           mkdir -p "{{ .TOOLCHAINS_DIR }}"
           tar xf "{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz" --directory "{{ .TOOLCHAINS_DIR }}"
         fi
 
-  fetch:
-    silent: true
-    cmds:
-      - task: download
-      - task: extract
-
-  download-ti:
+  fetch-ti:
     internal: true
     silent: true
     cmds:
@@ -121,11 +110,6 @@ tasks:
         vars:
           URL: '{{ get .URLS "ti_cgt_armllvm" }}'
           PATH: "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin"
-
-  extract-ti:
-    internal: true
-    silent: true
-    cmds:
       - mkdir -p "{{ .TI_INSTALL_DIR }}"
       - |
         if [ ! -d "${PROCESSOR_SDK_PATH}" ]; then
@@ -150,12 +134,6 @@ tasks:
           chmod +x "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin"
           "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin" --mode unattended --prefix "{{ .TI_INSTALL_DIR }}"
         fi
-
-  fetch-ti:
-    silent: true
-    cmds:
-      - task: download-ti
-      - task: extract-ti
 
   run-ti:
     cmds:

@@ -35,11 +35,10 @@ class GpioController
 
   private:
     struct gpiod_chip* m_chip1 {};
-    struct gpiod_chip* m_chip2 {};
 
     struct gpiod_line* m_line_led_red {};   // LED_RED output GPIO
     struct gpiod_line* m_line_led_green {}; // LED_GREEN output GPIO
-    struct gpiod_line* m_line_gpio17 {};    // GPIO17 set to input with pull-up resistor enabled (normally high)
+    struct gpiod_line* m_line_gpio22 {};    // GPIO22 set to input with pull-up resistor enabled (normally high)
 
     bool m_is_running {};
     int m_prev_input_state {};

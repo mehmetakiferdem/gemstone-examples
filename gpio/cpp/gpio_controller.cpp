@@ -24,10 +24,10 @@ GpioController::GpioController() {}
 
 GpioController::~GpioController()
 {
-    if (m_line_gpio4)
+    if (m_line_gpio27)
     {
-        gpiod_line_release(m_line_gpio4);
-        m_line_gpio4 = nullptr;
+        gpiod_line_release(m_line_gpio27);
+        m_line_gpio27 = nullptr;
     }
     if (m_line_led_red)
     {
@@ -39,21 +39,16 @@ GpioController::~GpioController()
         gpiod_line_release(m_line_led_green);
         m_line_led_green = nullptr;
     }
-    if (m_line_gpio17)
+    if (m_line_gpio22)
     {
-        gpiod_line_release(m_line_gpio17);
-        m_line_gpio17 = nullptr;
+        gpiod_line_release(m_line_gpio22);
+        m_line_gpio22 = nullptr;
     }
 
     if (m_chip1)
     {
         gpiod_chip_close(m_chip1);
         m_chip1 = nullptr;
-    }
-    if (m_chip2)
-    {
-        gpiod_chip_close(m_chip2);
-        m_chip2 = nullptr;
     }
 }
 
@@ -77,19 +72,12 @@ int GpioController::initialize()
         return 1;
     }
 
-    m_chip2 = gpiod_chip_open_by_name("gpiochip2");
-    if (!m_chip2)
-    {
-        std::cerr << "Failed to open gpiochip2" << std::endl;
-        return 1;
-    }
-
-    m_line_gpio4 = gpiod_chip_get_line(m_chip1, 38);
+    m_line_gpio27 = gpiod_chip_get_line(m_chip1, 33);
     m_line_led_red = gpiod_chip_get_line(m_chip1, 11);
     m_line_led_green = gpiod_chip_get_line(m_chip1, 12);
-    m_line_gpio17 = gpiod_chip_get_line(m_chip2, 8);
+    m_line_gpio22 = gpiod_chip_get_line(m_chip1, 41);
 
-    if (!m_line_gpio4 || !m_line_led_red || !m_line_led_green || !m_line_gpio17)
+    if (!m_line_gpio27 || !m_line_led_red || !m_line_led_green || !m_line_gpio22)
     {
         std::cerr << "Failed to get GPIO lines" << std::endl;
         return 1;
@@ -101,7 +89,7 @@ int GpioController::initialize()
     }
 
     // Read initial state of input
-    m_prev_input_state = gpiod_line_get_value(m_line_gpio17);
+    m_prev_input_state = gpiod_line_get_value(m_line_gpio22);
     if (m_prev_input_state < 0)
     {
         std::cerr << "Failed to read initial input state" << std::endl;
@@ -115,11 +103,11 @@ int GpioController::initialize()
 
 int GpioController::configure_outputs()
 {
-    // Configure gpiochip1-38 as active-high output with value 0
-    int ret = gpiod_line_request_output(m_line_gpio4, "gpio_example", 0);
+    // Configure gpiochip1-33 as active-high output with value 0
+    int ret = gpiod_line_request_output(m_line_gpio27, "gpio_example", 0);
     if (ret < 0)
     {
-        std::cerr << "Failed to configure line1-38 as output" << std::endl;
+        std::cerr << "Failed to configure line1-33 as output" << std::endl;
         return 1;
     }
 
@@ -144,11 +132,11 @@ int GpioController::configure_outputs()
 
 int GpioController::configure_inputs()
 {
-    // Configure gpiochip2-8 as pull-up input
-    int ret = gpiod_line_request_input_flags(m_line_gpio17, "gpio_example", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
+    // Configure gpiochip1-41 as pull-up input
+    int ret = gpiod_line_request_input_flags(m_line_gpio22, "gpio_example", GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP);
     if (ret < 0)
     {
-        std::cerr << "Failed to configure line2-8 as input" << std::endl;
+        std::cerr << "Failed to configure line1-41 as input" << std::endl;
         return 1;
     }
 
@@ -158,12 +146,12 @@ int GpioController::configure_inputs()
 void GpioController::print_configuration()
 {
     std::cout << "GPIO configuration complete:" << std::endl;
-    std::cout << "- gpiochip1-38 (GPIO4)    : active-high output, value=0" << std::endl;
+    std::cout << "- gpiochip1-33 (GPIO27)   : active-high output, value=0" << std::endl;
     std::cout << "- gpiochip1-11 (RED LED)  : active-low output , value=0" << std::endl;
     std::cout << "- gpiochip1-12 (GREEN LED): active-high output, value=0" << std::endl;
-    std::cout << "- gpiochip2-8  (GPIO17)   : pull-up input" << std::endl;
+    std::cout << "- gpiochip1-41 (GPIO22)   : pull-up input" << std::endl;
     std::cout << std::endl;
-    std::cout << "Waiting for input transitions on GPIO17..." << std::endl;
+    std::cout << "Waiting for input transitions on GPIO22..." << std::endl;
     std::cout << "Press Ctrl+C to exit" << std::endl << std::endl;
 }
 
@@ -172,7 +160,7 @@ void GpioController::run()
     m_is_running = true;
     while (m_is_running)
     {
-        m_current_input_state = gpiod_line_get_value(m_line_gpio17);
+        m_current_input_state = gpiod_line_get_value(m_line_gpio22);
         if (m_current_input_state < 0)
         {
             std::cerr << "Failed to read input state" << std::endl;

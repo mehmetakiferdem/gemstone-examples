@@ -46,8 +46,7 @@ def main():
 
     # Initialize the magnetometer
     with MMC5603() as mag:
-        # Change this to match your I2C bus number (usually 1 for Raspberry Pi)
-        i2c_bus = 3  # Equivalent to /dev/i2c-3 in the C++ version
+        i2c_bus = 3
 
         if not mag.init(i2c_bus, MMC56X3_DEFAULT_ADDRESS, 12345):
             print("Failed to initialize MMC5603 magnetometer")

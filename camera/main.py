@@ -25,6 +25,7 @@ from video_processor import VideoProcessor
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Video Processor")
+    parser.epilog = f"Example: {parser.prog} -c 0 --model-dir build/downloads --snapshot-dir build/snapshots"
 
     source_group = parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument("-v", "--video-path", help="Path to video file")
