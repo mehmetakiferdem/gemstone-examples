@@ -43,16 +43,28 @@ includes a sysroot which contains libraries for the target system.
 📦 devbox:examples> task fetch
 ```
 
-##### 5. Cross compile single C/C++ project.
+##### 5. Cross compile single project.
 
 ```bash
-📦 devbox:examples> task clean build PROJECT=serial/c
+📦 devbox:examples> PROJECT=serial task clean build 
 ```
 
 ##### 6. Cross compile all C/C++ projects.
 
 ```bash
 📦 devbox:examples> task clean build
+```
+
+##### 7. Compile mcu project.
+
+mcu project has examples that run in two R5F real-time cores and two C7x DSP cores. 
+You don't need them if you are planning on running only Linux on your T3 Gemstone board.
+You need to fetch TI compilers and RTOS SDK if you want to compile mcu examples.
+These tools take approximately 7GB of disk space.
+After the fetch operation is done, mcu project can be compiled like any other project.
+
+```bash
+📦 devbox:examples> task fetch-ti
 ```
 
 ### Screencast
