@@ -86,6 +86,12 @@ tasks:
           tar xf "{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz" --directory "{{ .TOOLCHAINS_DIR }}"
         fi
 
+  destroy:
+    prompt: 'T3 Gemstone Toolchains will be deleted. Do you want to continue?'
+    cmds:
+      - rm -f "{{ .DOWNLOAD_DIR }}/t3gemstone-toolchains-${DISTRO_BASE}-${DISTRO_SUITE}.tar.gz"
+      - rm -rf "{{ .TOOLCHAINS_DIR }}"
+
   fetch-ti:
     internal: true
     silent: true
@@ -198,13 +204,3 @@ tasks:
     preconditions:
       - sh: modinfo tty0tty
         msg: "tty0tty kernel module is needed, download and compile from: https://github.com/freemed/tty0tty"
-
-  destroy:
-    prompt: 'All downloaded and extracted dependencies and build folder will be deleted. Do you want to continue?'
-    cmds:
-      - |
-        rm -rf \
-          .venv \
-          .devbox \
-          build \
-          __marimo__
