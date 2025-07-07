@@ -14,7 +14,8 @@
 
 This repository contains example projects that demonstrate the features of T3 Gemstone boards.
 
-All details related to the project can be found at https://docs.t3gemstone.org/en/tutorials. Below, only a summary of how to perform the installation is provided.
+All details related to the project can be found at https://docs.t3gemstone.org/en/boards/o1/peripherals/introduction.
+Below, only a summary of how to perform the installation is provided.
 
 ##### 1. Install jetify-devbox on the host computer.
 
@@ -55,13 +56,13 @@ includes a sysroot which contains libraries for the target system.
 📦 devbox:examples> task clean build
 ```
 
-##### 7. Compile mcu project.
+##### 7. Compile MCU project.
 
-mcu project has examples that run in two R5F real-time cores and two C7x DSP cores. 
+MCU project has examples that run in two R5F real-time cores and two C7x DSP cores. 
 You don't need them if you are planning on running only Linux on your T3 Gemstone board.
-You need to fetch TI compilers and RTOS SDK if you want to compile mcu examples.
+You need to fetch TI compilers and RTOS SDK if you want to compile MCU examples.
 These tools take approximately 7GB of disk space.
-After the fetch operation is done, mcu project can be compiled like any other project.
+After the fetch operation is done, MCU project can be compiled like any other project.
 
 ```bash
 📦 devbox:examples> task fetch-ti
