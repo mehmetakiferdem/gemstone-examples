@@ -29,13 +29,7 @@ user@host:$ ./setup.sh
 user@host:$ devbox shell
 ```
 
-##### 3. Start notebook.
-
-```bash
-📦 devbox:examples> devbox run marimo
-```
-
-##### 4. Download the toolchain.
+##### 3. Download the toolchain.
 
 Toolchain includes tools that are needed for cross compiling projects such as `gcc`, `g++`, `ld`, etc. It also
 includes a sysroot which contains libraries for the target system.
@@ -44,19 +38,19 @@ includes a sysroot which contains libraries for the target system.
 📦 devbox:examples> task fetch
 ```
 
-##### 5. Cross compile single project.
+##### 4. Cross compile single project.
 
 ```bash
 📦 devbox:examples> PROJECT=serial task clean build 
 ```
 
-##### 6. Cross compile all C/C++ projects.
+##### 5. Cross compile all C/C++ projects.
 
 ```bash
 📦 devbox:examples> task clean build
 ```
 
-##### 7. Compile MCU project.
+##### 6. Cross compile MCU project.
 
 MCU project has examples that run in two R5F real-time cores and two C7x DSP cores. 
 You don't need them if you are planning on running only Linux on your T3 Gemstone board.
@@ -66,6 +60,36 @@ After the fetch operation is done, MCU project can be compiled like any other pr
 
 ```bash
 📦 devbox:examples> task fetch-ti
+📦 devbox:examples> PROJECT=mcu task clean build
+```
+
+MCU project's target paths are defined as `MCU_TARGETS` variable in `.env` file. If you have another MCU target 
+that you would like to compile, add absolute or relative path of the target's `makefile` directory to `MCU_TARGETS`
+variable.
+
+```bash
+MCU_TARGETS="
+ipc_rpmsg_echo_linux/j722s-evm/c75ss0-0_freertos/ti-c7000
+ipc_rpmsg_echo_linux/j722s-evm/c75ss1-0_freertos/ti-c7000
+ipc_rpmsg_echo_linux/j722s-evm/main-r5fss0-0_freertos/ti-arm-clang
+ipc_rpmsg_echo_linux/j722s-evm/mcu-r5fss0-0_freertos/ti-arm-clang
+path/to/another/target/mcu-r5fss0-0_nortos/ti-arm-clang
+"
+```
+
+Which peripherals project uses (GPIO, I2C, UART, etc.) and their configuration are defined in `.syscfg` files.
+`SysConfig` GUI tool is used for adding new peripherals or changing Pin Mux for existing ones.
+To launch `SysConfig` for a MCU target change `SYSCONFIG_TARGET` variable to the desired target. You can edit that
+variable inside `.env` file or pass it as env variable to `task` command.
+
+```bash
+SYSCONFIG_TARGET=ipc_rpmsg_echo_linux/j722s-evm/main-r5fss0-0_freertos/ti-arm-clang task sysconfig
+```
+
+##### 7. If you want to develop Python projects check out Marimo notebook.
+
+```bash
+📦 devbox:examples> task py-notebook
 ```
 
 ### Screencast

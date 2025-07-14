@@ -65,7 +65,6 @@ tasks:
       - test -f "{{ .PATH }}"
 
   fetch:
-    internal: true
     silent: true
     cmds:
       - task: wget
@@ -93,9 +92,9 @@ tasks:
       - rm -rf "{{ .TOOLCHAINS_DIR }}"
 
   fetch-ti:
-    internal: true
     silent: true
     cmds:
+      - task: fetch
       - task: wget
         vars:
           URL: '{{ get .URLS "ti_j722s_rtos_sdk" }}'
@@ -141,14 +140,11 @@ tasks:
           "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin" --mode unattended --prefix "{{ .TI_INSTALL_DIR }}"
         fi
 
-  run-ti:
+  sysconfig:
     cmds:
       - task: fetch-ti
       - |
-        if [ "${CROSS_COMPILE}" == "true" ]; then
-          pushd "{{ .TOOLCHAINS_DIR }}" >/dev/null && source ./env && popd >/dev/null
-        fi
-        make -C mcu run-ti
+        make -C mcu sysconfig
 
   build:
     cmds:
@@ -204,3 +200,12 @@ tasks:
     preconditions:
       - sh: modinfo tty0tty
         msg: "tty0tty kernel module is needed, download and compile from: https://github.com/freemed/tty0tty"
+
+  py-notebook:
+    dir: python-notebook
+    cmds:
+      - marimo --yes edit notebook.py --port 8001
+
+  py-bundle:
+    cmds:
+      - uv run pyinstaller --onefile --noconfirm --windowed --specpath=build --name gcs gui/gcs.py
