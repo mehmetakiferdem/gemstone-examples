@@ -48,9 +48,9 @@ tasks:
       - echo "  CROSS_COMPILE  = ${CROSS_COMPILE}"
       - echo
       - echo "TI Environment:"
-      - echo "  PROFILE        = ${PROFILE}"
-      - echo "  RUN_TI_TARGET  = ${RUN_TI_TARGET}"
-      - echo "  RUN_TI_COMMAND = ${RUN_TI_COMMAND}"
+      - echo "  PROFILE          = ${PROFILE}"
+      - echo "  SYSCONFIG_TARGET = ${SYSCONFIG_TARGET}"
+      - echo "  MCU_TARGETS      = ${MCU_TARGETS}"
       - echo
 
   wget:
@@ -139,6 +139,7 @@ tasks:
           chmod +x "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin"
           "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin" --mode unattended --prefix "{{ .TI_INSTALL_DIR }}"
         fi
+      - make -C mcu libs >/dev/null
 
   sysconfig:
     cmds:

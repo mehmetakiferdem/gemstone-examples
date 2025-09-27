@@ -4,6 +4,9 @@ all: check-tools
 	@$(foreach ti_project_dir,$(MCU_TARGETS), \
 		$(MAKE) -C "$(ti_project_dir)" -f makefile all;)
 
+libs: check-tools
+	$(MAKE) -C "$(MCU_PLUS_SDK_PATH)" -f makefile libs
+
 clean: check-tools
 	@$(foreach ti_project_dir,$(MCU_TARGETS), \
 		$(MAKE) -C "$(ti_project_dir)" -f makefile clean;)
@@ -18,4 +21,4 @@ check-tools:
 			exit 1; \
 		fi;)
 
-.PHONY: all clean run-ti check-tools
+.PHONY: all libs clean sysconfig check-tools

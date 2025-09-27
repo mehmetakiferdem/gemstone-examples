@@ -52,7 +52,7 @@ includes a sysroot which contains libraries for the target system.
 
 ##### 6. Cross compile MCU project.
 
-MCU project has examples that run in two R5F real-time cores and two C7x DSP cores. 
+`mcu` project has examples that run in two R5F real-time cores and two C7x DSP cores. 
 You don't need them if you are planning on running only Linux on your T3 Gemstone board.
 You need to fetch TI compilers and RTOS SDK if you want to compile MCU examples.
 These tools take approximately 7GB of disk space.
@@ -63,8 +63,8 @@ After the fetch operation is done, MCU project can be compiled like any other pr
 📦 devbox:examples> PROJECT=mcu task clean build
 ```
 
-MCU project's target paths are defined as `MCU_TARGETS` variable in `.env` file. If you have another MCU target 
-that you would like to compile, add absolute or relative path of the target's `makefile` directory to `MCU_TARGETS`
+MCU projects to compile are defined as `MCU_TARGETS` variable in `.env` file. If you have another MCU project 
+that you would like to compile, add absolute or relative path of the project's `makefile` directory to `MCU_TARGETS`
 variable.
 
 ```bash
@@ -79,7 +79,7 @@ path/to/another/target/mcu-r5fss0-0_nortos/ti-arm-clang
 
 Which peripherals project uses (GPIO, I2C, UART, etc.) and their configuration are defined in `.syscfg` files.
 `SysConfig` GUI tool is used for adding new peripherals or changing Pin Mux for existing ones.
-To launch `SysConfig` for a MCU target change `SYSCONFIG_TARGET` variable to the desired target. You can edit that
+To launch `SysConfig` for a MCU project change `SYSCONFIG_TARGET` variable to the desired project. You can edit that
 variable inside `.env` file or pass it as env variable to `task` command.
 
 ```bash
