@@ -19,7 +19,8 @@ vars:
       ti_j722s_mcusw_sdk: "https://dr-download.ti.com/software-development/software-development-kit-sdk/MD-1bSfTnVt5d/10.01.00.04/MCUSW_J722S_10.01.00.03.zip",
       ti_sysconfig: "https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-nsUM6f7Vvb/1.20.0.3587/sysconfig-1.20.0_3587-setup.run",
       ti_cgt_c7000: "https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-707zYe3Rik/4.1.0.LTS/ti_cgt_c7000_4.1.0.LTS_linux-x64_installer.bin",
-      ti_cgt_armllvm: "https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-ayxs93eZNN/3.2.2.LTS/ti_cgt_armllvm_3.2.2.LTS_linux-x64_installer.bin"
+      ti_cgt_armllvm: "https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-ayxs93eZNN/3.2.2.LTS/ti_cgt_armllvm_3.2.2.LTS_linux-x64_installer.bin",
+      gcc_arm: "https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz",
     }
 
 env:
@@ -27,6 +28,7 @@ env:
   PROCESSOR_SDK_PATH: "{{ .TI_INSTALL_DIR }}/ti-processor-sdk-rtos-j722s-evm-10_01_00_04"
   CGT_TI_ARM_CLANG_PATH: "{{ .TI_INSTALL_DIR }}/ti-cgt-armllvm_3.2.2.LTS"
   CGT_TI_C7000_PATH: "{{ .TI_INSTALL_DIR }}/ti-cgt-c7000_4.1.0.LTS"
+  GCC_ARM_PATH: "{{ .TI_INSTALL_DIR }}/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf"
   MCU_PLUS_SDK_PATH: "${PROCESSOR_SDK_PATH}/mcu_plus_sdk_j722s_10_01_00_22"
   MCUSW_PATH: "{{ .TI_INSTALL_DIR }}/MCUSW_J722S_10.01.00.03"
   SYSCFG_PATH: "{{ .TI_INSTALL_DIR }}/sysconfig_1.20.0"
@@ -115,6 +117,10 @@ tasks:
         vars:
           URL: '{{ get .URLS "ti_cgt_armllvm" }}'
           PATH: "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin"
+      - task: wget
+        vars:
+          URL: '{{ get .URLS "gcc_arm"}}'
+          PATH: "{{ .DOWNLOAD_DIR }}/gcc_arm.tar.xz"
       - mkdir -p "{{ .TI_INSTALL_DIR }}"
       - |
         if [ ! -d "${PROCESSOR_SDK_PATH}" ]; then
@@ -127,7 +133,7 @@ tasks:
       - |
         if [ ! -d "${SYSCFG_PATH}" ]; then
           chmod +x "{{ .DOWNLOAD_DIR }}/sysconfig.run"
-          "{{ .DOWNLOAD_DIR }}/sysconfig.run" --mode unattended --prefix "${SYSCFG_PATH}}"
+          "{{ .DOWNLOAD_DIR }}/sysconfig.run" --mode unattended --prefix "${SYSCFG_PATH}"
         fi
       - |
         if [ ! -d "${CGT_TI_C7000_PATH}" ]; then
@@ -139,7 +145,11 @@ tasks:
           chmod +x "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin"
           "{{ .DOWNLOAD_DIR }}/ti_cgt_armllvm.bin" --mode unattended --prefix "{{ .TI_INSTALL_DIR }}"
         fi
-      - make -C mcu libs >/dev/null
+      - |
+        if [ ! -d "${GCC_ARM_PATH}" ]; then
+          tar xf "{{ .DOWNLOAD_DIR }}/gcc_arm.tar.xz" --directory "{{ .TI_INSTALL_DIR }}"
+        fi
+      - make -j$(nproc) -C mcu libs >/dev/null
 
   sysconfig:
     cmds:
